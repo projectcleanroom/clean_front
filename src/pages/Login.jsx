@@ -5,7 +5,7 @@ const Login = () => {
             <form>
                 <input />
                 <input />
-                <button></button>
+                <button>로그인</button>
             </form>
         </div>
     );
