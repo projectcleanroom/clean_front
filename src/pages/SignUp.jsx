@@ -5,7 +5,7 @@ const SignUp = () => {
             <form>
                 <input />
                 <input />
-                <button></button>
+                <button>회원가입</button>
             </form>
         </div>
     );
