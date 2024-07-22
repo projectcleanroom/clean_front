@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import serverUrl from '../redux/config/serverUrl';
 
 const Login = () => {
     const [id, setId] = useState('');
@@ -13,7 +14,7 @@ const Login = () => {
         e.preventDefault();
         try {
             const { data } = await axios.post(
-                'https://moneyfulpublicpolicy.co.kr/login',
+                `${serverUrl}/login`,
                 { id, password }
             );
             if (data.success) {

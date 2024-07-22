@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import serverUrl from '../redux/config/serverUrl';
 
 const SignUp = () => {
     const [id, setId] = useState('');
@@ -12,7 +13,7 @@ const SignUp = () => {
         e.preventDefault();
         try {
             const { data } = await axios.post(
-                'https://moneyfulpublicpolicy.co.kr/register',
+                `${serverUrl}/resgister`,
                 {
                     id,
                     password,

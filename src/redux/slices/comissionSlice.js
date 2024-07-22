@@ -1,5 +1,3 @@
-// src/redux/slices/comissionSlice.js
-
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import serverUrl from "../config/serverUrl";
@@ -9,10 +7,10 @@ export const __addComission = createAsyncThunk(
   "__addComission",
   async (payload, thunkAPI) => {
     try {
-      const response = await axios.post(`${serverUrl}`, payload);
+      const response = await axios.post(`${serverUrl}/comissions`, payload);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -20,12 +18,13 @@ export const __addComission = createAsyncThunk(
 // Comission 삭제 thunk
 export const __deleteComission = createAsyncThunk(
   "__deleteComission",
-  async (comissionId, thunkAPI) => {
+  async (id, thunkAPI) => {
     try {
-      await axios.delete(`${serverUrl}/${comissionId}`);
-      return comissionId;
+      await axios.delete(`${serverUrl}/comissions/${id}`);
+      return id;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      console.error("Delete error:", error);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -35,7 +34,7 @@ export const __fetchComission = createAsyncThunk(
   "__fetchComission",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(`${serverUrl}`);
+      const response = await axios.get(`${serverUrl}/comissions`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -44,16 +43,20 @@ export const __fetchComission = createAsyncThunk(
 );
 
 export const __updateComission = createAsyncThunk(
-  "__updateComission",
-  async (comission, thunkAPI) => {
-    try {
-      const response = await axios.patch(`${serverUrl}/${comission.id}`, comission);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+    "__updateComission",
+    async (comission, thunkAPI) => {
+      try {
+        const response = await axios.patch(
+          `${serverUrl}/comissions/${comission.id}`,
+          comission
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Update error:", error);
+        return thunkAPI.rejectWithValue(error.response?.data || error.message);
+      }
     }
-  }
-);
+  );
 
 const initialState = {
   comissions: [],
@@ -84,7 +87,9 @@ const comissionSlice = createSlice({
       })
       .addCase(__updateComission.fulfilled, (state, action) => {
         state.isLoading = false;
-        const index = state.comissions.findIndex((comission) => comission.id === action.payload.id);
+        const index = state.comissions.findIndex(
+          (comission) => comission.id === action.payload.id
+        );
         if (index !== -1) {
           state.comissions[index] = action.payload;
         }
