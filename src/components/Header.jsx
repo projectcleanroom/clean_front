@@ -1,19 +1,8 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Header = () => {
-  //   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const nav = useNavigate();
-
-  //   useEffect =
-  //     (() => {
-  //       const accessToken = cookie.get("accessToken");
-  //       setIsLoggedIn(!!accessToken);
-  //     },
-  //     []);
-
-  const handleAuthAction = () => {};
 
   return (
     <StHeader>
@@ -27,13 +16,7 @@ const Header = () => {
       </div>
 
       <div>
-        <button
-          // onClick={handleAuthAction}
-          onClick={() => nav("/login")}
-        >
-          {/* {isLoggedIn ? "Log Out" : "Log In"} */}
-          로그인
-        </button>
+        <button onClick={() => nav("/login")}>로그인</button>
         <button onClick={() => nav("/signup")}>회원가입</button>
       </div>
     </StHeader>

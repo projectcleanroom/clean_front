@@ -1,22 +1,47 @@
-const Comission_Write = () => {
-    return (
+// src/components/ComissionWrite.js
+
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { __addComission } from "../redux/slices/comissionSlice";
+
+const ComissionWrite = () => {
+  const dispatch = useDispatch();
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newComission = { id: Date.now(), title, body };
+    dispatch(__addComission(newComission));
+    setTitle("");
+    setBody("");
+  };
+
+  return (
+    <div>
+      <h1>Add New Comission</h1>
+      <form onSubmit={handleSubmit}>
         <div>
-            <h2>의뢰 작성</h2>
-            <form>
-                <input 
-                type="text"
-                placeholder="제목을 입력해 주세요"
-                name='title'
-                />
-                <input 
-                type="text"
-                placeholder="내용을 입력해 주세요"
-                name='body'
-                />
-                <button>등록</button>
-            </form>
+          <label>Title:</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
         </div>
-    );
+        <div>
+          <label>Body:</label>
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Add Comission</button>
+      </form>
+    </div>
+  );
 };
 
-export default Comission_Write;
+export default ComissionWrite;
