@@ -11,7 +11,7 @@ const ComissionWrite = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newComission = { id: Date.now(), title, body };
+    const newComission = { title, body };
     dispatch(__addComission(newComission));
     setTitle("");
     setBody("");
