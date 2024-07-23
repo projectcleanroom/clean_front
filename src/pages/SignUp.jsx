@@ -4,23 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import serverUrl from '../redux/config/serverUrl';
 
 const SignUp = () => {
-    const [id, setId] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [nickname, setNickname] = useState('');
+    const [nickName, setNickName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const nav = useNavigate();
 
     const signUpSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await axios.post(
-                `${serverUrl}/resgister`,
-                {
-                    id,
-                    password,
-                    nickname,
-                }
-            );
-            if (data.success) {
+            const data = await axios.post(`${serverUrl}/users`, {
+                email,
+                password,
+                nickName,
+                phoneNumber,
+            });
+            console.log(data);
+            if (data.status === 201) {
                 nav(`/login`);
             } else {
                 alert(`회원가입에 실패 했어요!`);
@@ -37,32 +37,41 @@ const SignUp = () => {
                 <h2>SignUp</h2>
             </div>
             <form onSubmit={signUpSubmit}>
-                <p>ID</p>
+                <p>이메일</p>
                 <input
                     type="text"
-                    value={id}
+                    value={email}
                     onChange={(e) => {
-                        setId(e.target.value);
+                        setEmail(e.target.value);
                     }}
-                    placeholder="ID"
+                    placeholder="email을 입력해주세요"
                 />
-                <p>PW</p>
+                <p>비밀번호</p>
                 <input
                     type="password"
                     value={password}
                     onChange={(e) => {
                         setPassword(e.target.value);
                     }}
-                    placeholder="PW"
+                    placeholder="비밀번호를 입력해주세요"
                 />
-                <p>NickName</p>
+                <p>닉네임</p>
                 <input
                     type="text"
-                    value={nickname}
+                    value={nickName}
                     onChange={(e) => {
-                        setNickname(e.target.value);
+                        setNickName(e.target.value);
                     }}
-                    placeholder="Nickname"
+                    placeholder="닉네임을 입력해주세요"
+                />
+                <p>전화번호</p>
+                <input
+                    type="text"
+                    value={phoneNumber}
+                    onChange={(e) => {
+                        setPhoneNumber(e.target.value);
+                    }}
+                    placeholder="전화번호를 입력해주세요"
                 />
                 <br />
                 <button type="submit">회원가입하기</button>

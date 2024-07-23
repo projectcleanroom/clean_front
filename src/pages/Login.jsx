@@ -5,19 +5,21 @@ import { AuthContext } from '../context/AuthContext';
 import serverUrl from '../redux/config/serverUrl';
 
 const Login = () => {
-    const [id, setId] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
     const { login } = useContext(AuthContext);
     const nav = useNavigate();
 
     const loginSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await axios.post(
-                `${serverUrl}/login`,
-                { id, password }
-            );
-            if (data.success) {
+            const data = await axios.post(`${serverUrl}/users`, {
+                email,
+                password,
+            });
+            console.log(data);
+            if (data.status === 201) {
                 login(data.success);
                 nav(`/`);
             } else {
@@ -34,23 +36,23 @@ const Login = () => {
                 <h2>Login</h2>
             </div>
             <form onSubmit={loginSubmit}>
-                <p>login</p>
+                <p>이메일</p>
                 <input
                     type="text"
-                    value={id}
+                    value={email}
                     onChange={(e) => {
-                        setId(e.target.value);
+                        setEmail(e.target.value);
                     }}
-                    placeholder="ID를 입력해주세요"
+                    placeholder="email을 입력해주세요"
                 />
-                <p>password</p>
+                <p>비밀번호</p>
                 <input
                     type="password"
                     value={password}
                     onChange={(e) => {
                         setPassword(e.target.value);
                     }}
-                    placeholder="password를 입력해주세요"
+                    placeholder="비밀번호를 입력해주세요"
                 />
                 <br />
                 <button type="submit">로그인</button>
