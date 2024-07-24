@@ -38,7 +38,7 @@ const ComissionWrite = () => {
             required
           />
         </div>
-        <button type="submit">Add Comission</button>
+        <button className="btn" type="submit">Add Comission</button>
       </form>
     </div>
   );

@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    background-color: #0bb8f9;
+    color: #FFFFFF;
+    padding: 10px;
+    margin: 1px;
+    border-radius: 8px;
+  }
+
+  .h-btn {
+    background-color: none;
+    color: #FFFFFF;
+    padding: 10px;
+  }
+}
+
