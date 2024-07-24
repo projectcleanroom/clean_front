@@ -1,16 +1,19 @@
 {
-  "comissions": [
-    {
-      "id": 1721652667675,
-      "title": "ㅂㅂㅂ",
-      "body": "ㅂㅂㅂ"
-    },
-    {
-      "id": 1721652989337,
-      "title": "ㅂㅂㅂㅂㅂㅂ",
-      "body": "ㅂㅂㅂㅂㅂㅂ"
-    }
-  ],
-  "isLoading": false,
-  "error": null
+    "comissions": [
+        {
+            "id": "1721652667675",
+            "title": "청소해주세요",
+            "body": "깨끗하게 살고싶어요"
+        }
+    ],
+    "users": [
+        {
+            "email": "daeseonglee7@nate.com",
+            "password": "1q2w3e4r!@",
+            "nickName": "관리자 닉네임",
+            "phoneNumber": "010-1234-5678"
+        }
+    ],
+    "isLoading": false,
+    "error": null
 }
