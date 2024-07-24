@@ -15,34 +15,38 @@ export const __addComission = createAsyncThunk(
   }
 );
 
-// Comission 삭제 thunk
-export const __deleteComission = createAsyncThunk(
-  "__deleteComission",
-  async (id, thunkAPI) => {
-    try {
-      await axios.delete(`${serverUrl}/comissions/${id}`);
-      return id;
-    } catch (error) {
-      console.error("Delete error:", error);
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
-    }
-  }
-);
-
 // Comission 목록 가져오기 thunk
 export const __fetchComission = createAsyncThunk(
-  "__fetchComission",
-  async (_, thunkAPI) => {
-    try {
-      const response = await axios.get(`${serverUrl}/comissions`);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+    "__fetchComission",
+    async (_, thunkAPI) => {
+      try {
+        const response = await axios.get(`${serverUrl}/comissions`);
+        return response.data;
+      } catch (error) {
+        return thunkAPI.rejectWithValue(error.response.data);
+      }
     }
-  }
-);
+  );
 
-export const __updateComission = createAsyncThunk(
+// Comission 삭제 thunk
+export const __deleteComission = createAsyncThunk(
+    "__deleteComission",
+    async (id, thunkAPI) => {
+      try {
+        const response = await axios.delete(`${serverUrl}/comissions/${id}`);
+        if (response.status === 200) {
+          return id;
+        } else {
+          return thunkAPI.rejectWithValue("Delete operation failed");
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        return thunkAPI.rejectWithValue(error.response?.data || error.message);
+      }
+    }
+  );
+
+  export const __updateComission = createAsyncThunk(
     "__updateComission",
     async (comission, thunkAPI) => {
       try {
@@ -50,7 +54,11 @@ export const __updateComission = createAsyncThunk(
           `${serverUrl}/comissions/${comission.id}`,
           comission
         );
-        return response.data;
+        if (response.status === 200) {
+          return response.data;
+        } else {
+          return thunkAPI.rejectWithValue("Update operation failed");
+        }
       } catch (error) {
         console.error("Update error:", error);
         return thunkAPI.rejectWithValue(error.response?.data || error.message);

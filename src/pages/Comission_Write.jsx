@@ -11,7 +11,7 @@ const ComissionWrite = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newComission = { id: Date.now(), title, body };
+    const newComission = { title, body };
     dispatch(__addComission(newComission));
     setTitle("");
     setBody("");
@@ -38,7 +38,7 @@ const ComissionWrite = () => {
             required
           />
         </div>
-        <button type="submit">Add Comission</button>
+        <button className="btn" type="submit">Add Comission</button>
       </form>
     </div>
   );

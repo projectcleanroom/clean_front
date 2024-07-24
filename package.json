@@ -34,6 +34,7 @@
     "lodash": "^4.17.21",
     "msw": "^2.3.2",
     "postcss": "^8.4.39",
+    "prettier-plugin-tailwindcss": "^0.6.5",
     "prop-types": "^15.8.1",
     "react-bootstrap": "^2.10.4",
     "react-id-generator": "^3.0.2",

@@ -4,6 +4,7 @@ import Login from "../pages/Login";
 import SignUp from "../pages/SignUp";
 import Comission_Write from "../pages/Comission_Write";
 import Comission_List from "../pages/Comission_List";
+import Comission_Detail from "../pages/Comission_Detail";
 import User_Orders from "../pages/User_Orders";
 import Layout from "../components/Layout";
 
@@ -17,6 +18,7 @@ const Router = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/comissionwrite" element={<Comission_Write />} />
           <Route path="/comissionlist" element={<Comission_List />} />
+          <Route path="/comissiondetail/:id" element={<Comission_Detail />} />
           <Route path="/userorders" element={<User_Orders />} />
         </Route>
       </Routes>
