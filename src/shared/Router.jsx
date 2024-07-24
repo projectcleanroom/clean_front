@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import {
     BrowserRouter,
     Navigate,
+    Outlet,
     Route,
     Routes,
-    Outlet,
 } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Layout from '../components/Layout';
@@ -15,7 +15,7 @@ import Comission_Write from '../pages/Comission_Write';
 import Comission_List from '../pages/Comission_List';
 import Comission_Detail from '../pages/Comission_Detail';
 import User_Orders from '../pages/User_Orders';
-import MyPage from '../pages/MyPage';
+import MyPage from '../pages/Mypage';
 
 const ProtectedRoute = () => {
     const { isAuthenticated } = useContext(AuthContext);
