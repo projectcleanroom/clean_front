@@ -72,8 +72,8 @@ const Comission_Detail = () => {
                             required
                         />
                     </div>
-                    <button type="submit">Save Changes</button>
-                    <button type="button" onClick={() => setIsEditing(false)}>
+                    <button className="btn" type="submit">Save Changes</button>
+                    <button className="btn" type="button" onClick={() => setIsEditing(false)}>
                         Cancel
                     </button>
                 </form>
@@ -81,10 +81,10 @@ const Comission_Detail = () => {
                 <>
                     <h2>{comission.title}</h2>
                     <p>{comission.body}</p>
-                    <button onClick={() => setIsEditing(true)}>Edit</button>
+                    <button className="btn" onClick={() => setIsEditing(true)}>Edit</button>
                 </>
             )}
-            <button onClick={() => navigate('/comissionlist')}>
+            <button className="btn" onClick={() => navigate('/comissionlist')}>
                 Back to List
             </button>
         </div>

@@ -39,11 +39,11 @@ const ComissionList = () => {
           <li key={comission.id}>
             <h2>{comission.title}</h2>
             <p>{comission.body}</p>
-            <button onClick={() => handleDeleteComission(comission.id)}>
+            <button className="btn" onClick={() => handleDeleteComission(comission.id)}>
               Delete
             </button>
             <Link to={`/comissiondetail/${comission.id}`}>
-              <button>Update</button>
+              <button className="btn">Update</button>
             </Link>
           </li>
         ))}
