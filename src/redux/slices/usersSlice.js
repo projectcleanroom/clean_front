@@ -3,14 +3,11 @@ import axios from 'axios';
 import serverUrl from '../config/serverUrl';
 
 // Comission 추가
-export const __addComission = createAsyncThunk(
-    '__addUsers',
+export const __signUp = createAsyncThunk(
+    '__signUp',
     async (payload, thunkAPI) => {
         try {
-            const response = await axios.post(
-                `${serverUrl}/comissions`,
-                payload
-            );
+            const response = await axios.post(`${serverUrl}/users`, payload);
             return response.data;
         } catch (error) {
             return thunkAPI.rejectWithValue(
@@ -21,12 +18,12 @@ export const __addComission = createAsyncThunk(
 );
 
 // Users 삭제 thunk
-export const __deleteComission = createAsyncThunk(
-    '__deleteUsers',
-    async (id, thunkAPI) => {
+export const __deleteUser = createAsyncThunk(
+    '__deleteUser',
+    async (email, thunkAPI) => {
         try {
-            await axios.delete(`${serverUrl}/Users/${id}`);
-            return id;
+            await axios.delete(`${serverUrl}/Users/${email}`);
+            return email;
         } catch (error) {
             console.error('Delete error:', error);
             return thunkAPI.rejectWithValue(
@@ -37,7 +34,7 @@ export const __deleteComission = createAsyncThunk(
 );
 
 // Users 목록 가져오기 thunk
-export const __fetchComission = createAsyncThunk(
+export const __fetchUsers = createAsyncThunk(
     '__fetchUsers',
     async (_, thunkAPI) => {
         try {
@@ -49,13 +46,13 @@ export const __fetchComission = createAsyncThunk(
     }
 );
 
-export const __updateComission = createAsyncThunk(
+export const __updateUsers = createAsyncThunk(
     '__updateUsers',
-    async (comission, thunkAPI) => {
+    async (users, thunkAPI) => {
         try {
             const response = await axios.patch(
-                `${serverUrl}/Users/${comission.id}`,
-                comission
+                `${serverUrl}/Users/${users.email}`,
+                users
             );
             return response.data;
         } catch (error) {
@@ -69,38 +66,39 @@ export const __updateComission = createAsyncThunk(
 
 const initialState = {
     comissions: [],
+    users: [],
     isLoading: false,
     error: null,
 };
 
 const usersSlice = createSlice({
-    name: 'Users',
+    name: 'users',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         // 개별 액션 처리
         builder
-            .addCase(__fetchComission.fulfilled, (state, action) => {
+            .addCase(__fetchUsers.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.comissions = action.payload;
+                state.users = action.payload;
             })
-            .addCase(__addComission.fulfilled, (state, action) => {
+            .addCase(__signUp.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.comissions.push(action.payload);
+                state.users.push(action.payload);
             })
-            .addCase(__deleteComission.fulfilled, (state, action) => {
+            .addCase(__deleteUser.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.comissions = state.comissions.filter(
-                    (comission) => comission.id !== action.payload
+                state.users = state.users.filter(
+                    (user) => user.email !== action.payload
                 );
             })
-            .addCase(__updateComission.fulfilled, (state, action) => {
+            .addCase(__updateUsers.fulfilled, (state, action) => {
                 state.isLoading = false;
-                const index = state.comissions.findIndex(
-                    (comission) => comission.id === action.payload.id
+                const index = state.users.findIndex(
+                    (user) => user.email === action.payload.email
                 );
                 if (index !== -1) {
-                    state.comissions[index] = action.payload;
+                    state.users[index] = action.payload;
                 }
             })
             // pending, rejected 공통 패턴 처리
