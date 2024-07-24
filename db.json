@@ -11,8 +11,7 @@
             "email": "daeseonglee7@nate.com",
             "password": "1q2w3e4r!@",
             "nickName": "관리자 닉네임",
-            "phoneNumber": "010-1234-5678",
-            "id": "eea2"
+            "phoneNumber": "010-1234-5678"
         }
     ],
     "isLoading": false,
