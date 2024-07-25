@@ -8,21 +8,46 @@
   ],
   "users": [
     {
-      "email": "daeseonglee7@nate.com",
-      "password": "1q2w3e4r!@",
-      "nickName": "관리자 닉네임",
-      "phoneNumber": "010-1234-5678",
-      "id": "d7ce"
+      "email": "example@example.com",
+      "password": "password123",
+      "nickName": "exampleNick",
+      "phoneNumber": "123-456-7890",
+      "id": "6e34"
     },
     {
-      "id": "0172",
-      "email": "",
-      "password": ""
+      "email": "ddd",
+      "password": "ddd",
+      "nickName": "ddd",
+      "phoneNumber": "ddd",
+      "id": "71d1"
     },
     {
-      "id": "59e2",
-      "email": "",
-      "password": ""
+      "id": "a211",
+      "email": "rrr",
+      "password": "rrr",
+      "nickName": "rrr",
+      "phoneNumber": "rrr"
+    },
+    {
+      "id": "1c5d",
+      "email": "vvv",
+      "password": "vvv",
+      "nickName": "vvv",
+      "phoneNumber": "vvv"
+    },
+    {
+      "id": "abe3",
+      "email": "a",
+      "password": "a",
+      "nickName": "a",
+      "phoneNumber": "a"
+    },
+    {
+      "id": "fcb2",
+      "email": "asdasd",
+      "password": "asdasd",
+      "nickName": "asdasd",
+      "phoneNumber": "asdasd"
     }
   ],
   "isLoading": false,
