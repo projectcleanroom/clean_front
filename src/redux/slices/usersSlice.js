@@ -34,24 +34,28 @@ export const fetchCurrentUser = createAsyncThunk(
 // 사용자 정보 수정 (PATCH 사용)
 export const updateUser = createAsyncThunk(
     'users/updateUser',
-    async ({ email, nickName, phoneNumber }) => {
-        const response = await axios.patch(`${serverUrl}/users/${email}`, {
-            nickName,
-            phoneNumber
-        });
-        return response.data;
+    async ({ id, nickName, phoneNumber }, { rejectWithValue }) => {
+        try {
+            const response = await axios.patch(`${serverUrl}/users/${id}`, {
+                nickName,
+                phoneNumber
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
     }
 );
 
 // 사용자 삭제 (회원 탈퇴)
 export const deleteUser = createAsyncThunk(
     'users/deleteUser',
-    async (email, thunkAPI) => {
+    async (id, { rejectWithValue }) => {
         try {
-            await axios.delete(`${serverUrl}/users/${email}`);
-            return email;
+            await axios.delete(`${serverUrl}/users/${id}`);
+            return id;
         } catch (error) {
-            return thunkAPI.rejectWithValue(error.response?.data || error.message);
+            return rejectWithValue(error.response?.data || error.message);
         }
     }
 );
@@ -68,85 +72,50 @@ const usersSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        // 필요한 경우 여기에 동기 액션을 추가할 수 있습니다.
+        clearCurrentUser: (state) => {
+            state.currentUser = null;
+        }
     },
     extraReducers: (builder) => {
         builder
-            // 전체 사용자 목록 가져오기
-            .addMatcher(
-                (action) => action.type.startsWith('users/fetchUsers') && action.type.endsWith('/pending'),
-                (state) => {
-                    state.isLoading = true;
-                }
-            )
-            .addMatcher(
-                (action) => action.type.startsWith('users/fetchUsers') && action.type.endsWith('/fulfilled'),
-                (state, action) => {
-                    state.isLoading = false;
-                    state.users = action.payload;
-                }
-            )
-            .addMatcher(
-                (action) => action.type.startsWith('users/fetchUsers') && action.type.endsWith('/rejected'),
-                (state, action) => {
-                    state.isLoading = false;
-                    state.error = action.payload;
-                }
-            )
-            // 현재 사용자 정보 가져오기
-            .addMatcher(
-                (action) => action.type.startsWith('users/fetchCurrentUser') && action.type.endsWith('/fulfilled'),
-                (state, action) => {
-                    state.currentUser = action.payload;
-                }
-            )
-            // 사용자 정보 수정
-            .addMatcher(
-                (action) => action.type.startsWith('users/updateUser') && action.type.endsWith('/fulfilled'),
-                (state, action) => {
-                    state.currentUser = action.payload;
-                    // 전체 목록에서도 해당 사용자 정보 업데이트
-                    const index = state.users.findIndex(user => user.email === action.payload.email);
-                    if (index !== -1) {
-                        state.users[index] = action.payload;
-                    }
-                }
-            )
-            // 사용자 삭제 (회원 탈퇴)
-            .addMatcher(
-                (action) => action.type.startsWith('users/deleteUser') && action.type.endsWith('/pending'),
-                (state) => {
-                    state.isLoading = true;
-                }
-            )
-            .addMatcher(
-                (action) => action.type.startsWith('users/deleteUser') && action.type.endsWith('/fulfilled'),
-                (state, action) => {
-                    state.isLoading = false;
-                    // 전체 사용자 목록에서 삭제된 사용자 제거
-                    state.users = state.users.filter(user => user.email !== action.payload);
-                    // 삭제된 사용자가 현재 로그인한 사용자였다면 currentUser를 null로 설정
-                    if (state.currentUser && state.currentUser.email === action.payload) {
-                        state.currentUser = null;
-                    }
-                }
-            )
-            .addMatcher(
-                (action) => action.type.startsWith('users/deleteUser') && action.type.endsWith('/rejected'),
-                (state, action) => {
-                    state.isLoading = false;
-                    state.error = action.payload || '사용자 삭제 중 오류가 발생했습니다.';
-                }
-            )
-            // 공통 에러 처리
-            .addMatcher(
-                (action) => action.type.endsWith('/rejected'),
-                (state, action) => {
-                    state.isLoading = false;
-                    state.error = action.payload || '오류가 발생하였습니다.';
-                }
-            );
-    },
+            // fetchUsers
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.users = action.payload;
+        state.isLoading = false;
+      })
+      // fetchCurrentUser
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.currentUser = action.payload;
+        state.isLoading = false;
+      })
+      // updateUser
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.currentUser = action.payload;
+        state.isLoading = false;
+      })
+      // deleteUser
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.currentUser = null;
+        state.users = state.users.filter(user => user.id !== action.payload);
+        state.isLoading = false;
+      })
+      // 모든 pending 액션 처리
+      .addMatcher(
+        (action) => action.type.endsWith('/pending'),
+        (state) => {
+          state.isLoading = true;
+          state.error = null;
+        }
+      )
+      // 모든 rejected 액션 처리
+      .addMatcher(
+        (action) => action.type.endsWith('/rejected'),
+        (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload || action.error.message;
+        }
+      );
+  },
 });
 
 export default usersSlice.reducer;
@@ -156,3 +125,4 @@ export const selectAllUsers = (state) => state.users.users;
 export const selectCurrentUser = (state) => state.users.currentUser;
 export const selectUsersLoading = (state) => state.users.isLoading;
 export const selectUsersError = (state) => state.users.error;
+export const { clearCurrentUser } = usersSlice.actions;

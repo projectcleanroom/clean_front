@@ -8,32 +8,11 @@
   ],
   "users": [
     {
-      "email": "example@example.com",
-      "password": "password123",
-      "nickName": "exampleNick",
-      "phoneNumber": "123-456-7890",
-      "id": "6e34"
-    },
-    {
-      "email": "ddd",
-      "password": "ddd",
-      "nickName": "ddd",
-      "phoneNumber": "ddd",
-      "id": "71d1"
-    },
-    {
       "id": "a211",
       "email": "rrr",
       "password": "rrr",
       "nickName": "rrr",
       "phoneNumber": "rrr"
-    },
-    {
-      "id": "1c5d",
-      "email": "vvv",
-      "password": "vvv",
-      "nickName": "vvv",
-      "phoneNumber": "vvv"
     },
     {
       "id": "abe3",
@@ -48,6 +27,27 @@
       "password": "asdasd",
       "nickName": "asdasd",
       "phoneNumber": "asdasd"
+    },
+    {
+      "id": "e101",
+      "email": "aaa@aaa.aaa",
+      "password": "aaa",
+      "nickName": "aaa",
+      "phoneNumber": "aaa"
+    },
+    {
+      "id": "ddca",
+      "email": "bbb@bbb.bbb",
+      "password": "bbb111!!!",
+      "nickName": "bbb",
+      "phoneNumber": "bbb"
+    },
+    {
+      "id": "7239",
+      "email": "qqq@gmail.com",
+      "password": "qqq111!!!",
+      "nickName": "qqqqqqaaaaahhhh",
+      "phoneNumber": "1234567890"
     }
   ],
   "isLoading": false,
