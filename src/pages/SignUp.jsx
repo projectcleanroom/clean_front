@@ -13,22 +13,26 @@ const SignUp = () => {
 
     const signUpSubmit = async (e) => {
         e.preventDefault();
+        if (!email || !password || !nickName || !phoneNumber) {
+            alert('모든 필드를 입력해주세요.');
+            return;
+        }
         try {
-            const data = await axios.post(`${serverUrl}/users`, {
+            const response = await axios.post(`${serverUrl}/users`, {
                 email,
                 password,
                 nickName,
                 phoneNumber,
             });
-            console.log(data);
-            if (data.status === 201) {
+            if (response.status === 201) {
+                alert('회원가입 성공!');
                 nav(`/login`);
             } else {
-                alert(`회원가입에 실패 했어요!`);
+                alert(`회원가입 실패: ${response.data.message}`);
             }
         } catch (error) {
             console.error(`회원가입 에러`, error.message);
-            alert(`회원가입에 실패 했어요! 다시 시도해주세요 :) `);
+            alert(`회원가입 실패: ${error.response?.data?.message || error.message}`);
         }
     };
 
@@ -50,9 +54,7 @@ const SignUp = () => {
                             <input
                                 type="text"
                                 value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                }}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="email을 입력해주세요"
                                 className="w-full p-2 border border-gray-300 rounded"
                             />
@@ -62,9 +64,7 @@ const SignUp = () => {
                             <input
                                 type="password"
                                 value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                }}
+                                onChange={(e) => setPassword(e.target.value)}
                                 placeholder="비밀번호를 입력해주세요"
                                 className="w-full p-2 border border-gray-300 rounded"
                             />
@@ -74,9 +74,7 @@ const SignUp = () => {
                             <input
                                 type="text"
                                 value={nickName}
-                                onChange={(e) => {
-                                    setNickName(e.target.value);
-                                }}
+                                onChange={(e) => setNickName(e.target.value)}
                                 placeholder="닉네임을 입력해주세요"
                                 className="w-full p-2 border border-gray-300 rounded"
                             />
@@ -86,9 +84,7 @@ const SignUp = () => {
                             <input
                                 type="text"
                                 value={phoneNumber}
-                                onChange={(e) => {
-                                    setPhoneNumber(e.target.value);
-                                }}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
                                 placeholder="전화번호를 입력해주세요"
                                 className="w-full p-2 border border-gray-300 rounded"
                             />
@@ -97,10 +93,7 @@ const SignUp = () => {
                             <button className="btn" type="submit">
                                 회원가입하기
                             </button>
-                            <button
-                                className="btn"
-                                onClick={() => nav(`/login`)}
-                            >
+                            <button className="btn" onClick={() => nav(`/login`)}>
                                 로그인하러가기
                             </button>
                         </div>

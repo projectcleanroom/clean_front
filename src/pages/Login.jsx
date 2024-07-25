@@ -8,27 +8,35 @@ import logo from '../assets/logo.png';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
     const { login } = useContext(AuthContext);
     const nav = useNavigate();
 
     const loginSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = await axios.post(`${serverUrl}/users`, {
-                email,
-                password,
+            // 모든 사용자 데이터를 가져옵니다.
+            const response = await axios.get(`${serverUrl}/users`, {
+                params: {
+                    email,
+                    password
+                }
             });
-            console.log(data);
-            if (data.status === 201) {
-                login(data.status === 201);
+    
+            const users = response.data;
+    
+            // 입력한 이메일과 비밀번호가 일치하는 사용자가 있는지 확인합니다.
+            const user = users.find(user => user.email === email && user.password === password);
+    
+            if (user) {
+                // 사용자 인증 성공
+                login(user.token, user.email);
                 nav(`/`);
             } else {
-                alert(`login failed`);
+                alert('로그인 실패: 잘못된 이메일 또는 비밀번호입니다.');
             }
         } catch (error) {
-            console.error(`Login error :`, error);
-            alert(`Login failed`);
+            console.error('로그인 오류:', error);
+            alert('로그인 실패');
         }
     };
 
@@ -50,9 +58,7 @@ const Login = () => {
                             <input
                                 type="text"
                                 value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                }}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="email을 입력해주세요"
                                 className="w-full p-2 border border-gray-300 rounded"
                             />
@@ -62,9 +68,7 @@ const Login = () => {
                             <input
                                 type="password"
                                 value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                }}
+                                onChange={(e) => setPassword(e.target.value)}
                                 placeholder="비밀번호를 입력해주세요"
                                 className="w-full p-2 border border-gray-300 rounded"
                             />
@@ -73,10 +77,7 @@ const Login = () => {
                             <button className="btn" type="submit">
                                 로그인
                             </button>
-                            <button
-                                className="btn"
-                                onClick={() => nav(`/signup`)}
-                            >
+                            <button className="btn" onClick={() => nav(`/signup`)}>
                                 회원가입
                             </button>
                         </div>
