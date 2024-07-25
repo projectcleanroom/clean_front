@@ -38,7 +38,7 @@ const MyPage = () => {
     const handleUpdate = (e) => {
         e.preventDefault();
         if (currentEmail) {
-            dispatch(updateUser({ email: currentEmail, nickName: formData.nickName, phoneNumber: formData.phoneNumber }));
+            dispatch(updateUser({ ...formData, email: currentEmail }));
         } else {
             console.error('No current email found');
         }

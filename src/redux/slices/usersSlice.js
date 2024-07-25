@@ -73,47 +73,71 @@ const usersSlice = createSlice({
     extraReducers: (builder) => {
         builder
             // 전체 사용자 목록 가져오기
-            .addCase(fetchUsers.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(fetchUsers.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.users = action.payload;
-            })
-            .addCase(fetchUsers.rejected, (state, action) => {
-                state.isLoading = false;
-                state.error = action.payload;
-            })
+            .addMatcher(
+                (action) => action.type.startsWith('users/fetchUsers') && action.type.endsWith('/pending'),
+                (state) => {
+                    state.isLoading = true;
+                }
+            )
+            .addMatcher(
+                (action) => action.type.startsWith('users/fetchUsers') && action.type.endsWith('/fulfilled'),
+                (state, action) => {
+                    state.isLoading = false;
+                    state.users = action.payload;
+                }
+            )
+            .addMatcher(
+                (action) => action.type.startsWith('users/fetchUsers') && action.type.endsWith('/rejected'),
+                (state, action) => {
+                    state.isLoading = false;
+                    state.error = action.payload;
+                }
+            )
             // 현재 사용자 정보 가져오기
-            .addCase(fetchCurrentUser.fulfilled, (state, action) => {
-                state.currentUser = action.payload;
-            })
+            .addMatcher(
+                (action) => action.type.startsWith('users/fetchCurrentUser') && action.type.endsWith('/fulfilled'),
+                (state, action) => {
+                    state.currentUser = action.payload;
+                }
+            )
             // 사용자 정보 수정
-            .addCase(updateUser.fulfilled, (state, action) => {
-                state.currentUser = action.payload;
-                // 전체 목록에서도 해당 사용자 정보 업데이트
-                const index = state.users.findIndex(user => user.email === action.payload.email);
-                if (index !== -1) {
-                    state.users[index] = action.payload;
+            .addMatcher(
+                (action) => action.type.startsWith('users/updateUser') && action.type.endsWith('/fulfilled'),
+                (state, action) => {
+                    state.currentUser = action.payload;
+                    // 전체 목록에서도 해당 사용자 정보 업데이트
+                    const index = state.users.findIndex(user => user.email === action.payload.email);
+                    if (index !== -1) {
+                        state.users[index] = action.payload;
+                    }
                 }
-            })
+            )
             // 사용자 삭제 (회원 탈퇴)
-            .addCase(deleteUser.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(deleteUser.fulfilled, (state, action) => {
-                state.isLoading = false;
-                // 전체 사용자 목록에서 삭제된 사용자 제거
-                state.users = state.users.filter(user => user.email !== action.payload);
-                // 삭제된 사용자가 현재 로그인한 사용자였다면 currentUser를 null로 설정
-                if (state.currentUser && state.currentUser.email === action.payload) {
-                    state.currentUser = null;
+            .addMatcher(
+                (action) => action.type.startsWith('users/deleteUser') && action.type.endsWith('/pending'),
+                (state) => {
+                    state.isLoading = true;
                 }
-            })
-            .addCase(deleteUser.rejected, (state, action) => {
-                state.isLoading = false;
-                state.error = action.payload || '사용자 삭제 중 오류가 발생했습니다.';
-            })
+            )
+            .addMatcher(
+                (action) => action.type.startsWith('users/deleteUser') && action.type.endsWith('/fulfilled'),
+                (state, action) => {
+                    state.isLoading = false;
+                    // 전체 사용자 목록에서 삭제된 사용자 제거
+                    state.users = state.users.filter(user => user.email !== action.payload);
+                    // 삭제된 사용자가 현재 로그인한 사용자였다면 currentUser를 null로 설정
+                    if (state.currentUser && state.currentUser.email === action.payload) {
+                        state.currentUser = null;
+                    }
+                }
+            )
+            .addMatcher(
+                (action) => action.type.startsWith('users/deleteUser') && action.type.endsWith('/rejected'),
+                (state, action) => {
+                    state.isLoading = false;
+                    state.error = action.payload || '사용자 삭제 중 오류가 발생했습니다.';
+                }
+            )
             // 공통 에러 처리
             .addMatcher(
                 (action) => action.type.endsWith('/rejected'),
