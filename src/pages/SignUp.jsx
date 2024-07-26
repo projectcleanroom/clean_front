@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import serverUrl from "../redux/config/serverUrl";
 import logo from "../assets/logo.png";
 import EmailInput from "../components/EmailInput";
@@ -19,7 +19,7 @@ const SignUp = () => {
   const [passwordError, setPasswordError] = useState("");
   const [nickNameError, setNickNameError] = useState("");
   const [phoneNumberError, setPhoneNumberError] = useState("");
-  const nav = useNavigate();
+  const navigate = useNavigate();
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
@@ -50,17 +50,28 @@ const SignUp = () => {
       return;
     }
     try {
+      // 이메일 중복 체크
+      const existingUser = await axios.get(`${serverUrl}/users?email=${email}`);
+      if (existingUser.data.length > 0) {
+        alert("이미 존재하는 이메일입니다.");
+        return;
+      }
+
+      // 새 사용자 생성
       const response = await axios.post(`${serverUrl}/users`, {
         email,
         password,
         nickName,
         phoneNumber,
+        // JSON Server에서는 자동으로 id를 생성하지만, 토큰을 모방하기 위해 임의의 값을 생성합니다.
+        token: Math.random().toString(36).substr(2, 9),
       });
+
       if (response.status === 201) {
         alert("회원가입 성공!");
-        nav(`/login`);
+        navigate(`/login`);
       } else {
-        alert(`회원가입 실패: ${response.data.message}`);
+        alert(`회원가입 실패: ${response.statusText}`);
       }
     } catch (error) {
       console.error(`회원가입 에러`, error.message);
@@ -128,14 +139,14 @@ const SignUp = () => {
             </div>
             <div className="flex space-x-4">
               <button
-                className="btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
                 type="submit"
               >
                 회원가입하기
               </button>
               <button
-                className="btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-                onClick={() => nav(`/login`)}
+                className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
+                onClick={() => navigate(`/login`)}
               >
                 로그인하러가기
               </button>

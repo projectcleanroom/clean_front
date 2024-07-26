@@ -1,43 +1,52 @@
-import { createContext, useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import axios from "axios";
+import serverUrl from "../redux/config/serverUrl";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [currentEmail, setCurrentEmail] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState(null);
 
-    useEffect(() => {
-        const accessToken = localStorage.getItem('accessToken');
-        const email = localStorage.getItem('email');
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+      setIsAuthenticated(true);
+    }
+  }, []);
 
-        setIsAuthenticated(!!accessToken);
-        setCurrentEmail(email);
-    }, []);
+  const login = (newToken) => {
+    localStorage.setItem("token", newToken);
+    setToken(newToken);
+    setIsAuthenticated(true);
+  };
 
-    const login = (token, email) => {
-        localStorage.setItem('accessToken', token);
-        localStorage.setItem('email', email);
-        setIsAuthenticated(true);
-        setCurrentEmail(email);
-    };
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    setIsAuthenticated(false);
+  };
 
-    const logout = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('email');
-        setIsAuthenticated(false);
-        setCurrentEmail(null);
-    };
+  const authAxios = axios.create({
+    baseURL: serverUrl,
+  });
 
-    return (
-        <AuthContext.Provider value={{ isAuthenticated, currentEmail, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
-};
+  authAxios.interceptors.request.use(
+    (config) => {
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
 
-AuthProvider.propTypes = {
-    children: PropTypes.node.isRequired,
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, authAxios }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);

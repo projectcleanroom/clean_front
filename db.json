@@ -8,27 +8,6 @@
   ],
   "users": [
     {
-      "id": "a211",
-      "email": "rrr",
-      "password": "rrr",
-      "nickName": "rrr",
-      "phoneNumber": "rrr"
-    },
-    {
-      "id": "abe3",
-      "email": "a",
-      "password": "a",
-      "nickName": "a",
-      "phoneNumber": "a"
-    },
-    {
-      "id": "fcb2",
-      "email": "asdasd",
-      "password": "asdasd",
-      "nickName": "asdasd",
-      "phoneNumber": "asdasd"
-    },
-    {
       "id": "e101",
       "email": "aaa@aaa.aaa",
       "password": "aaa",
@@ -48,6 +27,22 @@
       "password": "qqq111!!!",
       "nickName": "qqqqqqaaaaahhhh",
       "phoneNumber": "1234567890"
+    },
+    {
+      "id": "abd3",
+      "email": "aaa@gmail.com",
+      "password": "aaa111!!!",
+      "nickName": "aaa",
+      "phoneNumber": "11111111111",
+      "token": "bpq0o3f37"
+    },
+    {
+      "id": "67c3",
+      "email": "zzz@gmail.com",
+      "password": "zzz111!!!",
+      "nickName": "zzz",
+      "phoneNumber": "1234567890",
+      "token": "kd2663q5q"
     }
   ],
   "isLoading": false,

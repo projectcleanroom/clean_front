@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import serverUrl from "../redux/config/serverUrl";
 import logo from "../assets/logo.png";
 import EmailInput from "../components/EmailInput";
 import { validatePassword } from "../utils/validationUtils";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -32,17 +32,13 @@ const Login = () => {
       return;
     }
     try {
-      const response = await axios.get(`${serverUrl}/users`, {
-        params: { email, password },
-      });
-
-      const users = response.data;
-      const user = users.find(
-        (user) => user.email === email && user.password === password
+      const response = await axios.get(
+        `${serverUrl}/users?email=${email}&password=${password}`
       );
-
-      if (user) {
-        login(user.token, user.email);
+      if (response.data.length > 0) {
+        // JSON Server doesn't provide tokens, so we'll use the user's id as a mock token
+        const mockToken = response.data.email;
+        login(mockToken);
         navigate(`/`);
       } else {
         alert("로그인 실패: 잘못된 이메일 또는 비밀번호입니다.");
@@ -87,13 +83,13 @@ const Login = () => {
             </div>
             <div className="flex space-x-4">
               <button
-                className="btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
                 type="submit"
               >
                 로그인
               </button>
               <button
-                className="btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
                 onClick={() => navigate(`/signup`)}
               >
                 회원가입

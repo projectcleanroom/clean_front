@@ -1,69 +1,64 @@
-import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-import icon from '../assets/icon.png'; // 로고 이미지 임포트
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import icon from "../assets/icon.png";
 
 const Header = () => {
-    const { isAuthenticated, logout, mypage } = useContext(AuthContext);
-    const nav = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
-    const handleLogout = () => {
-        logout();
-        nav(`/`);
-    };
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
-    const handleMypage = () => {
-        nav(`/mypage`);
-    };
+  return (
+    <div className="flex justify-between items-center p-4 bg-brand text-white">
+      <div>
+        <img
+          src={icon}
+          alt="Home"
+          className="h-12 cursor-pointer"
+          onClick={() => navigate("/")}
+        />
+      </div>
+      <div className="flex space-x-4">
+        <button className="h-btn" onClick={() => navigate("/Comissionwrite")}>
+          의뢰작성하기
+        </button>
+        <button className="h-btn" onClick={() => navigate("/Comissionlist")}>
+          의뢰목록
+        </button>
+        <button className="h-btn" onClick={() => navigate("/userorders")}>
+          견적확인하기
+        </button>
+      </div>
 
-    return (
-        <div className="flex justify-between items-center p-4 bg-sky-500">
-            <div>
-                <img
-                    src={icon}
-                    alt="Home"
-                    className="h-12 cursor-pointer" // 로고 크기 조절, 클릭 가능하게 설정
-                    onClick={() => nav('/')} // 클릭 시 홈으로 이동
-                />
-            </div>
-            <div>
-                <button
-                    className="h-btn"
-                    onClick={() => nav('/Comissionwrite')}
-                >
-                    의뢰작성하기
-                </button>
-                <button className="h-btn" onClick={() => nav('/Comissionlist')}>
-                    의뢰목록
-                </button>
-                <button className="h-btn" onClick={() => nav('/userorders')}>
-                    견적확인하기
-                </button>
-            </div>
-
-            <div>
-                {isAuthenticated ? (
-                    <>
-                        <button onClick={handleMypage}>마이 페이지</button>
-                        {' / '}
-                        <button onClick={handleLogout}>Log Out</button>
-                    </>
-                ) : (
-                    <>
-                        <button className="h-btn" onClick={() => nav('/login')}>
-                            Log In
-                        </button>
-                        <button
-                            className="h-btn"
-                            onClick={() => nav('/signup')}
-                        >
-                            회원가입
-                        </button>
-                    </>
-                )}
-            </div>
-        </div>
-    );
+      <div className="flex items-center">
+        {isAuthenticated ? (
+          <>
+            <button className="h-btn" onClick={() => navigate("/mypage/:email")}>
+              마이 페이지
+            </button>
+            <div className="w-px h-6 bg-white mx-2"></div>
+            <button className="h-btn" onClick={handleLogout}>
+              Log Out
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="h-btn" onClick={() => navigate("/login")}>
+              Log In
+            </button>
+            <div className="w-px h-6 bg-white mx-2"></div>
+            <button className="h-btn" onClick={() => navigate("/signup")}>
+              회원가입
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Header;
