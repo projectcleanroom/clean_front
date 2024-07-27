@@ -2,28 +2,28 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
-    __fetchComission,
-    __deleteComission,
-} from '../redux/slices/comissionSlice';
+    __fetchcommission,
+    __deletecommission,
+} from '../redux/slices/commissionSlice';
 
-const ComissionList = () => {
+const CommissionList = () => {
     const dispatch = useDispatch();
-    const { comissions, isLoading, error } = useSelector(
-        (state) => state.comission
+    const { commissions, isLoading, error } = useSelector(
+        (state) => state.commission
     );
     const [deleteError, setDeleteError] = useState(null);
 
     useEffect(() => {
-        dispatch(__fetchComission());
+        dispatch(__fetchcommission());
     }, [dispatch]);
 
-    const handleDeleteComission = async (id) => {
+    const handleDeletecommission = async (id) => {
         try {
-            await dispatch(__deleteComission(id)).unwrap();
-            console.log(`Comission with id: ${id} deleted successfully`);
+            await dispatch(__deletecommission(id)).unwrap();
+            console.log(`commission with id: ${id} deleted successfully`);
         } catch (error) {
             console.error('Delete failed:', error);
-            setDeleteError(`Failed to delete comission ${id}: ${error}`);
+            setDeleteError(`Failed to delete commission ${id}: ${error}`);
         }
     };
 
@@ -32,20 +32,20 @@ const ComissionList = () => {
 
     return (
         <div>
-            <h1>Comission List</h1>
+            <h1>commission List</h1>
             {deleteError && <p style={{ color: 'red' }}>{deleteError}</p>}
             <ul>
-                {comissions.map((comission) => (
-                    <li key={comission.id}>
-                        <h2>{comission.title}</h2>
-                        <p>{comission.body}</p>
+                {commissions.map((commission) => (
+                    <li key={commission.id}>
+                        <h2>{commission.title}</h2>
+                        <p>{commission.body}</p>
                         <button
                             className="btn"
-                            onClick={() => handleDeleteComission(comission.id)}
+                            onClick={() => handleDeletecommission(commission.id)}
                         >
                             Delete
                         </button>
-                        <Link to={`/comissiondetail/${comission.id}`}>
+                        <Link to={`/commissiondetail/${commission.id}`}>
                             <button className="btn">Update</button>
                         </Link>
                     </li>
@@ -55,4 +55,4 @@ const ComissionList = () => {
     );
 };
 
-export default ComissionList;
+export default CommissionList;

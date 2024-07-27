@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import icon from "../assets/icon.png";
 
 const Header = () => {
@@ -23,10 +23,10 @@ const Header = () => {
         />
       </div>
       <div className="flex space-x-4">
-        <button className="h-btn" onClick={() => navigate("/Comissionwrite")}>
+        <button className="h-btn" onClick={() => navigate("/commissionwrite")}>
           의뢰작성하기
         </button>
-        <button className="h-btn" onClick={() => navigate("/Comissionlist")}>
+        <button className="h-btn" onClick={() => navigate("/commissionlist")}>
           의뢰목록
         </button>
         <button className="h-btn" onClick={() => navigate("/userorders")}>

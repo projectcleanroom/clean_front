@@ -1,15 +1,15 @@
-import React from "react";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import Layout from "../components/Layout";
-import Home from "../pages/Home";
-import Login from "../pages/Login";
-import SignUp from "../pages/SignUp";
-import Comission_Write from "../pages/Comission_Write";
-import Comission_List from "../pages/Comission_List";
-import Comission_Detail from "../pages/Comission_Detail";
-import User_Orders from "../pages/User_Orders";
-import MyPage from "../pages/Mypage";
+import React from 'react';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { useAuth } from '../context/useAuth';
+import Layout from '../components/Layout';
+import Home from '../pages/Home';
+import Login from '../pages/Login';
+import SignUp from '../pages/SignUp';
+import CommissionWrite from '../pages/CommissionWrite';
+import CommissionList from '../pages/CommissionList';
+import CommissionDetail from '../pages/CommissionDetail';
+import UserOrders from '../pages/UserOrders';
+import MyPage from '../pages/Mypage';
 
 const ProtectedRoute = () => {
   const { isAuthenticated } = useAuth();
@@ -37,10 +37,10 @@ const Router = () => {
         {/* Protected Routes (for authenticated users) */}
         <Route element={<ProtectedRoute />}>
           <Route path="/mypage/:email" element={<MyPage />} />
-          <Route path="/comissionwrite" element={<Comission_Write />} />
-          <Route path="/comissionlist" element={<Comission_List />} />
-          <Route path="/comissiondetail/:id" element={<Comission_Detail />} />
-          <Route path="/userorders" element={<User_Orders />} />
+          <Route path="/commissionwrite" element={<commissionWrite />} />
+          <Route path="/commissionlist" element={<commissionList />} />
+          <Route path="/commissiondetail/:id" element={<commissionDetail />} />
+          <Route path="/userorders" element={<UserOrders />} />
         </Route>
       </Route>
     </Routes>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import serverUrl from "../redux/config/serverUrl";
 import logo from "../assets/logo.png";
 import EmailInput from "../components/EmailInput";
