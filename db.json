@@ -1,5 +1,5 @@
 {
-  "comissions": [
+  "commissions": [
     {
       "id": "1721652667675",
       "title": "청소해주세요",
@@ -48,14 +48,6 @@
       "nickName": "zzz",
       "phoneNumber": "1234567890",
       "token": "kd2663q5q"
-    },
-    {
-      "id": "bb96",
-      "email": "sss@gmail.com",
-      "password": "aaa111!!!",
-      "nickName": "aa",
-      "phoneNumber": "12345678909",
-      "token": "9le6xles1"
     }
   ],
   "isLoading": false,

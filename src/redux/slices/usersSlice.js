@@ -2,14 +2,29 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import serverUrl from '../config/serverUrl';
 
+// 액션 타입 상수
+export const USER_ACTION_TYPES = {
+  FETCH_USERS: 'users/fetchUsers',
+  FETCH_CURRENT_USER: 'users/fetchCurrentUser',
+  UPDATE_USER: 'users/updateUser',
+  DELETE_USER: 'users/deleteUser',
+};
+
 // 전체 사용자 목록 가져오기
 export const fetchUsers = createAsyncThunk(
-  'users/fetchUsers',
-  async (_, thunkAPI) => {
+  'USER_ACTION_TYPES/FETCH_USERS',
+  async (authAxios, thunkAPI) => {
     try {
-      const response = await axios.get(`${serverUrl}/users`);
+      const response = await authAxios.get(`${serverUrl}/users`);
       return response.data;
     } catch (error) {
+      if (error.response?.status === 401) {
+        //토큰 갱신 로직 호출 ( AuthContext에서 제공하는 함수)
+        await thunkAPI.dispatch(refreshToken());
+        //토큰 갱신 후 재시도
+        const retryResponse = await authAxios.get(`${serverUrl}/users`);
+        return retryResponse.data;
+      }
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   },
@@ -17,12 +32,17 @@ export const fetchUsers = createAsyncThunk(
 
 // 현재 로그인한 사용자 정보 가져오기
 export const fetchCurrentUser = createAsyncThunk(
-  'users/fetchCurrentUser',
+  'USER_ACTION_TYPES/FETCH_CURRENT_USER',
   async (authAxios, thunkAPI) => {
     try {
       const response = await authAxios.get(`${serverUrl}/users/me`);
       return response.data;
     } catch (error) {
+      if (error.response?.status === 401) {
+        await thunkAPI.dispatch(refreshToken());
+        const retryResponse = await authAxios.get(` ${serverUrl}/users/me`);
+        return retryResponse.data;
+      }
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   },
@@ -30,15 +50,28 @@ export const fetchCurrentUser = createAsyncThunk(
 
 // 사용자 정보 수정 (PATCH 사용)
 export const updateUser = createAsyncThunk(
-  'users/updateUser',
-  async ({ id, nickName, phoneNumber }, { rejectWithValue }) => {
+  USER_ACTION_TYPES.UPDATE_USER,
+  async ({ email, nick, phone_number, authAxios }, { rejectWithValue }) => {
     try {
-      const response = await axios.patch(`${serverUrl}/users/${id}`, {
-        nickName,
-        phoneNumber,
+      const response = await authAxios.patch(`${serverUrl}/users/${email}`, {
+        nick,
+        phone_number,
       });
       return response.data;
     } catch (error) {
+      if (error.response?.status === 401) {
+        // 토큰 갱신 로직 (AuthContext에서 제공하는 함수 사용)
+        await dispatch(refreshToken());
+        // 토큰 갱신 후 재시도
+        const retryResponse = await authAxios.patch(
+          `${serverUrl}/users/${email}`,
+          {
+            nick,
+            phone_number,
+          },
+        );
+        return retryResponse.data;
+      }
       return rejectWithValue(error.response?.data || error.message);
     }
   },
@@ -46,12 +79,17 @@ export const updateUser = createAsyncThunk(
 
 // 사용자 삭제 (회원 탈퇴)
 export const deleteUser = createAsyncThunk(
-  'users/deleteUser',
-  async (id, { rejectWithValue }) => {
+  USER_ACTION_TYPES.DELETE_USER,
+  async ({ email, authAxios }, { rejectWithValue }) => {
     try {
-      await axios.delete(`${serverUrl}/users/${id}`);
-      return id;
+      await authAxios.delete(`${serverUrl}/users/${email}`);
+      return email;
     } catch (error) {
+      if (error.response?.status === 401) {
+        await dispatch(refreshToken());
+        await authAxios.delete(`${serverUrl}/users/${email}`);
+        return email;
+      }
       return rejectWithValue(error.response?.data || error.message);
     }
   },
@@ -59,8 +97,8 @@ export const deleteUser = createAsyncThunk(
 
 // 초기 상태
 const initialState = {
-  users: [], // 전체 사용자 목록
-  currentUser: null, // 현재 로그인한 사용자
+  users: {}, // 사용자 정보를 이메일을 키로 하는 객체로 저장
+  currentUserEmail: null, // 현재 로그인한 사용자의 이메일
   isLoading: false,
   error: null,
 };
@@ -70,30 +108,36 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     clearCurrentUser: (state) => {
-      state.currentUser = null;
+      state.currentUserEmail = null;
     },
   },
   extraReducers: (builder) => {
     builder
       // fetchUsers
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.users = action.payload;
+        state.users = action.payload.reduce((acc, user) => {
+          acc[user.email] = user;
+          return acc;
+        }, {});
         state.isLoading = false;
       })
       // fetchCurrentUser
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
+        state.users[action.payload.email] = action.payload;
+        state.currentUserEmail = action.payload.email;
         state.isLoading = false;
       })
       // updateUser
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
+        state.users[action.payload.email] = action.payload;
         state.isLoading = false;
       })
       // deleteUser
       .addCase(deleteUser.fulfilled, (state, action) => {
-        state.currentUser = null;
-        state.users = state.users.filter((user) => user.id !== action.payload);
+        delete state.users[action.payload];
+        if (state.currentUserEmail === action.payload) {
+          state.currentUserEmail = null;
+        }
         state.isLoading = false;
       })
       // 모든 pending 액션 처리
@@ -118,8 +162,9 @@ const usersSlice = createSlice({
 export default usersSlice.reducer;
 
 // 선택자 함수들
-export const selectAllUsers = (state) => state.users.users;
-export const selectCurrentUser = (state) => state.users.currentUser;
+export const selectAllUsers = (state) => Object.values(state.users.users);
+export const selectCurrentUser = (state) =>
+  state.users.users[state.users.currentUserEmail];
 export const selectUsersLoading = (state) => state.users.isLoading;
 export const selectUsersError = (state) => state.users.error;
 export const { clearCurrentUser } = usersSlice.actions;
