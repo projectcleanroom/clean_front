@@ -1,82 +1,192 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { fetchCurrentUser, updateUser, deleteUser, selectCurrentUser, selectUsersLoading, selectUsersError } from '../redux/slices/usersSlice';
-import { useAuth } from '../context/AuthContext';
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
+import axios from "axios";
+import serverUrl from "../redux/config/serverUrl";
+import {
+  validateNickName,
+  validatePhoneNumber,
+} from "../utils/validationUtils";
 
 const MyPage = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const { currentEmail, isAuthenticated } = useAuth();
-    const currentUser = useSelector(selectCurrentUser);
-    const isLoading = useSelector(selectUsersLoading);
-    const error = useSelector(selectUsersError);
+  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const [formData, setFormData] = useState({
-        nickName: '',
-        phoneNumber: ''
-    });
+  const [formData, setFormData] = useState({
+    nickName: "",
+    phoneNumber: "",
+  });
+  const [nickNameError, setNickNameError] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
 
-    useEffect(() => {
-        if (!isAuthenticated || !currentEmail) {
-            navigate('/login');
-        } else if (!currentUser) {
-            dispatch(fetchCurrentUser(currentEmail));
+  const fetchCurrentUser = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("인증 토큰이 없습니다.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${serverUrl}/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data) {
+        setCurrentUser(response.data);
+        setFormData({
+          nickName: response.data.nickName,
+          phoneNumber: response.data.phoneNumber,
+        });
+      } else {
+        setError("사용자 정보를 찾을 수 없습니다.");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      setError("사용자 정보를 불러오는 데 실패했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    } else {
+      fetchCurrentUser();
+    }
+  }, [isAuthenticated, navigate, fetchCurrentUser]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "nickName") {
+      setNickNameError(validateNickName(value));
+    } else if (name === "phoneNumber") {
+      setPhoneNumberError(validatePhoneNumber(value));
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (nickNameError || phoneNumberError) {
+      alert("입력한 정보를 다시 확인해주세요.");
+      return;
+    }
+    try {
+      const response = await axios.patch(
+        `${serverUrl}/users/${currentUser.id}`,
+        formData,
+      );
+      if (response.status === 200) {
+        alert("프로필이 성공적으로 업데이트되었습니다.");
+        fetchCurrentUser(); // 업데이트된 정보를 다시 불러옵니다.
+      } else {
+        alert("프로필 업데이트에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("프로필 업데이트에 실패했습니다.");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (
+      window.confirm(
+        "정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+      )
+    ) {
+      try {
+        const response = await axios.delete(
+          `${serverUrl}/users/${currentUser.id}`,
+        );
+        if (response.status === 200) {
+          logout();
+          alert("계정이 성공적으로 삭제되었습니다.");
+          navigate("/");
         } else {
-            setFormData({
-                nickName: currentUser.nickName,
-                phoneNumber: currentUser.phoneNumber
-            });
+          alert("계정 삭제에 실패했습니다.");
         }
-    }, [dispatch, currentUser, currentEmail, isAuthenticated, navigate]);
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        alert("계정 삭제에 실패했습니다.");
+      }
+    }
+  };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleUpdate = (e) => {
-        e.preventDefault();
-        if (currentEmail) {
-            dispatch(updateUser({ ...formData, email: currentEmail }));
-        } else {
-            console.error('No current email found');
-        }
-    };
-
-    const handleDelete = () => {
-        if (currentEmail && window.confirm('정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-            dispatch(deleteUser(currentEmail));
-            // 여기에 로그아웃 및 홈페이지로 리다이렉트 로직 추가
-        }
-    };
-
-    if (!currentEmail) return <div>로그인이 필요합니다.</div>;
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-    if (!currentUser) return <div>사용자 정보를 불러올 수 없습니다.</div>;
-
+  if (isLoading) return <div className="mt-8 text-center">Loading...</div>;
+  if (error)
+    return <div className="mt-8 text-center text-red-500">Error: {error}</div>;
+  if (!currentUser)
     return (
-        <div>
-            <h1>My Page</h1>
-            <form onSubmit={handleUpdate}>
-                <div>
-                    <label>이메일</label>
-                    <input type="text" name="email" value={currentEmail} disabled />
-                </div>
-                <div>
-                    <label>닉네임</label>
-                    <input type="text" name="nickName" value={formData.nickName} onChange={handleInputChange} />
-                </div>
-                <div>
-                    <label>전화번호</label>
-                    <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} />
-                </div>
-                <button type="submit">Update Profile</button>
-            </form>
-            <button onClick={handleDelete}>Delete Account</button>
-        </div>
+      <div className="mt-8 text-center">사용자 정보를 불러올 수 없습니다.</div>
     );
+
+  return (
+    <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center">
+      <div className="w-full max-w-md overflow-hidden rounded-lg bg-white p-6 shadow-md">
+        <h1 className="mb-4 text-2xl font-bold">내 정보</h1>
+        <form onSubmit={handleUpdate} className="space-y-4">
+          <div>
+            <label className="mb-1 block">이메일</label>
+            <input
+              type="text"
+              name="email"
+              value={currentUser.email}
+              disabled
+              className="w-full rounded border border-gray-300 bg-gray-100 p-2"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block">닉네임</label>
+            <input
+              type="text"
+              name="nickName"
+              value={formData.nickName}
+              onChange={handleInputChange}
+              className="w-full rounded border border-gray-300 p-2"
+            />
+            {nickNameError && (
+              <p className="mt-1 text-sm text-red-500">{nickNameError}</p>
+            )}
+          </div>
+          <div>
+            <label className="mb-1 block">전화번호</label>
+            <input
+              type="text"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleInputChange}
+              className="w-full rounded border border-gray-300 p-2"
+            />
+            {phoneNumberError && (
+              <p className="mt-1 text-sm text-red-500">{phoneNumberError}</p>
+            )}
+          </div>
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              className="btn rounded px-4 py-2 text-white hover:bg-blue-500"
+            >
+              프로필 업데이트
+            </button>
+            <button
+              onClick={handleDelete}
+              className="btn rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+            >
+              계정 삭제
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default MyPage;

@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    __updateComission,
-    __fetchComission,
-} from '../redux/slices/comissionSlice';
+    __updatecommission,
+    __fetchcommission,
+} from '../redux/slices/commissionSlice';
 
-const Comission_Detail = () => {
+const CommissionDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { comissions, isLoading, error } = useSelector(
-        (state) => state.comission
+    const { commissions, isLoading, error } = useSelector(
+        (state) => state.commission
     );
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState('');
@@ -19,24 +19,24 @@ const Comission_Detail = () => {
     const [updateError, setUpdateError] = useState(null);
 
     useEffect(() => {
-        dispatch(__fetchComission());
+        dispatch(__fetchcommission());
     }, [dispatch]);
 
-    const comission = comissions.find((c) => c.id === id);
+    const commission = commissions.find((c) => c.id === id);
 
     useEffect(() => {
-        if (comission) {
-            setEditedTitle(comission.title);
-            setEditedBody(comission.body);
+        if (commission) {
+            setEditedTitle(commission.title);
+            setEditedBody(commission.body);
         }
-    }, [comission]);
+    }, [commission]);
 
     const handleUpdate = async (e) => {
         e.preventDefault();
         setUpdateError(null);
         try {
             await dispatch(
-                __updateComission({ id, title: editedTitle, body: editedBody })
+                __updatecommission({ id, title: editedTitle, body: editedBody })
             ).unwrap();
             setIsEditing(false);
         } catch (error) {
@@ -47,11 +47,11 @@ const Comission_Detail = () => {
 
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
-    if (!comission) return <p>Comission not found</p>;
+    if (!commission) return <p>commission not found</p>;
 
     return (
         <div>
-            <h1>Comission Detail</h1>
+            <h1>commission Detail</h1>
             {updateError && <p style={{ color: 'red' }}>{updateError}</p>}
             {isEditing ? (
                 <form onSubmit={handleUpdate}>
@@ -85,18 +85,18 @@ const Comission_Detail = () => {
                 </form>
             ) : (
                 <>
-                    <h2>{comission.title}</h2>
-                    <p>{comission.body}</p>
+                    <h2>{commission.title}</h2>
+                    <p>{commission.body}</p>
                     <button className="btn" onClick={() => setIsEditing(true)}>
                         Edit
                     </button>
                 </>
             )}
-            <button className="btn" onClick={() => navigate('/comissionlist')}>
+            <button className="btn" onClick={() => navigate('/commissionlist')}>
                 Back to List
             </button>
         </div>
     );
 };
 
-export default Comission_Detail;
+export default CommissionDetail;
