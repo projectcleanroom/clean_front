@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import serverUrl from "../redux/config/serverUrl";
@@ -7,39 +7,57 @@ import EmailInput from "../components/EmailInput";
 import { validatePassword } from "../utils/validationUtils";
 import axios from "axios";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+interface User {
+  email: string;
+  password: string;
+  nick: string;
+  phone_number: string;
+  token: string;
+}
+
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+interface FormErrors {
+  email: string;
+  password: string;
+}
+
+const Login: React.FC = () => {
+  const [formData, setFormData] = useState<LoginForm>({ email: "", password: "" });
+  const [errors, setErrors] = useState<FormErrors>({ email: "", password: "" });
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handlePasswordChange = (e) => {
-    const newPassword = e.target.value;
-    setPassword(newPassword);
-    setPasswordError(validatePassword(newPassword));
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (name === "password") {
+      setErrors(prev => ({ ...prev, password: validatePassword(value) }));
+    }
   };
 
-  const loginSubmit = async (e) => {
+  const loginSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!formData.email || !formData.password) {
       alert("이메일과 비밀번호를 모두 입력해주세요.");
       return;
     }
-    if (emailError || passwordError) {
+    if (errors.email || errors.password) {
       alert("입력한 정보를 다시 확인해주세요.");
       return;
     }
     try {
-      const response = await axios.get(
-        `${serverUrl}/users?email=${email}&password=${password}`
+      const response = await axios.get<User[]>(
+        `${serverUrl}/users?email=${formData.email}&password=${formData.password}`
       );
       if (response.data.length > 0) {
-        // JSON Server doesn't provide tokens, so we'll use the user's id as a mock token
-        const mockToken = response.data.email;
+        const mockToken = response.data[0].email;
         login(mockToken);
-        navigate(`/`);
+        navigate("/");
       } else {
         alert("로그인 실패: 잘못된 이메일 또는 비밀번호입니다.");
       }
@@ -63,22 +81,23 @@ const Login = () => {
           <h2 className="text-2xl font-bold mb-4">로그인</h2>
           <form onSubmit={loginSubmit} className="space-y-4">
             <EmailInput
-              email={email}
-              setEmail={setEmail}
-              emailError={emailError}
-              setEmailError={setEmailError}
+              email={formData.email}
+              setEmail={(email) => setFormData(prev => ({ ...prev, email }))}
+              emailError={errors.email}
+              setEmailError={(error) => setErrors(prev => ({ ...prev, email: error }))}
             />
             <div>
               <label className="block mb-1">비밀번호</label>
               <input
                 type="password"
-                value={password}
-                onChange={handlePasswordChange}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="비밀번호를 입력해주세요"
                 className="w-full p-2 border border-gray-300 rounded"
               />
-              {passwordError && (
-                <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
               )}
             </div>
             <div className="flex space-x-4">
@@ -90,7 +109,8 @@ const Login = () => {
               </button>
               <button
                 className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
-                onClick={() => navigate(`/signup`)}
+                onClick={() => navigate("/signup")}
+                type="button"
               >
                 회원가입
               </button>

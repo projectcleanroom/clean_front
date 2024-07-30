@@ -1,15 +1,15 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/useAuth";
-import icon from "../assets/icon.png";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/useAuth';
+import icon from '../assets/icon.png';
 
-const Header = () => {
+const Header: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate('/');
   };
 
   return (
@@ -19,17 +19,17 @@ const Header = () => {
           src={icon}
           alt="Home"
           className="h-12 cursor-pointer"
-          onClick={() => navigate("/")}
+          onClick={() => navigate('/')}
         />
       </div>
       <div className="flex space-x-4">
-        <button className="h-btn" onClick={() => navigate("/commissionwrite")}>
+        <button className="h-btn" onClick={() => navigate('/commissionwrite')}>
           의뢰작성하기
         </button>
-        <button className="h-btn" onClick={() => navigate("/commissionlist")}>
+        <button className="h-btn" onClick={() => navigate('/commissionlist')}>
           의뢰목록
         </button>
-        <button className="h-btn" onClick={() => navigate("/userorders")}>
+        <button className="h-btn" onClick={() => navigate('/userorders')}>
           견적확인하기
         </button>
       </div>
@@ -37,7 +37,10 @@ const Header = () => {
       <div className="flex items-center">
         {isAuthenticated ? (
           <>
-            <button className="h-btn" onClick={() => navigate("/mypage/:email")}>
+            <button
+              className="h-btn"
+              onClick={() => navigate('/mypage/:email')}
+            >
               마이 페이지
             </button>
             <div className="w-px h-6 bg-white mx-2"></div>
@@ -47,11 +50,11 @@ const Header = () => {
           </>
         ) : (
           <>
-            <button className="h-btn" onClick={() => navigate("/login")}>
+            <button className="h-btn" onClick={() => navigate('/login')}>
               Log In
             </button>
             <div className="w-px h-6 bg-white mx-2"></div>
-            <button className="h-btn" onClick={() => navigate("/signup")}>
+            <button className="h-btn" onClick={() => navigate('/signup')}>
               회원가입
             </button>
           </>
