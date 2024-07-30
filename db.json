@@ -48,6 +48,14 @@
       "nickName": "zzz",
       "phoneNumber": "1234567890",
       "token": "kd2663q5q"
+    },
+    {
+      "id": "221f",
+      "email": "eee@gmail.com",
+      "password": "eee111!!!",
+      "nick": "eee",
+      "phone_number": "1234567890",
+      "token": "fdpgzwgl3"
     }
   ],
   "isLoading": false,

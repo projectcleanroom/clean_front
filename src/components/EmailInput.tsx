@@ -1,42 +1,54 @@
-import React, { useState } from "react";
-import { validateEmail } from "../utils/validationUtils";
+import { ChangeEvent, useState } from 'react';
+import { validateEmail } from '../utils/validationUtils';
 
-const EmailInput = ({ email, setEmail, emailError, setEmailError }) => {
-  const [localPart, setLocalPart] = useState("");
-  const [domain, setDomain] = useState("");
-  const [customDomain, setCustomDomain] = useState("");
+interface EmailInputProps {
+  email: string;
+  setEmail: (email: string) => void;
+  emailError: string;
+  setEmailError: (error: string) => void;
+}
+
+const EmailInput: React.FC<EmailInputProps> = ({
+  email,
+  setEmail,
+  emailError,
+  setEmailError,
+}) => {
+  const [localPart, setLocalPart] = useState('');
+  const [domain, setDomain] = useState('');
+  const [customDomain, setCustomDomain] = useState('');
 
   const commonDomains = [
-    "gmail.com",
-    "naver.com",
-    "daum.net",
-    "hanmail.net",
-    "nate.com",
+    'gmail.com',
+    'naver.com',
+    'daum.net',
+    'hanmail.net',
+    'nate.com',
   ];
 
-  const handleLocalPartChange = (e) => {
+  const handleLocalPartChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLocalPart(e.target.value);
     updateEmail(e.target.value, domain);
   };
 
-  const handleDomainChange = (e) => {
+  const handleDomainChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedDomain = e.target.value;
     setDomain(selectedDomain);
-    if (selectedDomain === "custom") {
+    if (selectedDomain === 'custom') {
       updateEmail(localPart, customDomain);
     } else {
-      setCustomDomain("");
+      setCustomDomain('');
       updateEmail(localPart, selectedDomain);
     }
   };
 
-  const handleCustomDomainChange = (e) => {
+  const handleCustomDomainChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCustomDomain(e.target.value);
     updateEmail(localPart, e.target.value);
   };
 
-  const updateEmail = (local, dmn) => {
-    const newEmail = local && dmn ? `${local}@${dmn}` : "";
+  const updateEmail = (local: string, dmn: string) => {
+    const newEmail = local && dmn ? `${local}@${dmn}` : '';
     setEmail(newEmail);
     setEmailError(validateEmail(newEmail));
   };
@@ -67,7 +79,7 @@ const EmailInput = ({ email, setEmail, emailError, setEmailError }) => {
           <option value="custom">직접 입력</option>
         </select>
       </div>
-      {domain === "custom" && (
+      {domain === 'custom' && (
         <input
           type="text"
           value={customDomain}

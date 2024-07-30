@@ -25,18 +25,18 @@ export const validatePassword = (password) => {
   return "";
 };
 
-export const validateNickName = (nickName) => {
-  if (nickName.length < 2 || nickName.length > 20) {
+export const validateNick = (nick) => {
+  if (nick.length < 2 || nick.length > 20) {
     return "닉네임은 2-20자 사이여야 합니다.";
   }
-  if (!/^[a-zA-Z0-9가-힣]+$/.test(nickName)) {
+  if (!/^[a-zA-Z0-9가-힣]+$/.test(nick )) {
     return "닉네임은 특수문자를 포함할 수 없습니다.";
   }
   return "";
 };
 
-export const validatePhoneNumber = (phoneNumber) => {
-  if (!/^\d{10,11}$/.test(phoneNumber)) {
+export const validatePhone_number = (phone_number) => {
+  if (!/^\d{10,11}$/.test(phone_number)) {
     return "전화번호는 10-11자리의 숫자만 입력 가능합니다.";
   }
   return "";

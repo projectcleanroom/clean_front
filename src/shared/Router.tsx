@@ -1,8 +1,6 @@
-import React from 'react';
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import Layout from '../components/Layout';
-import Home from '../pages/Home';
 import Login from '../pages/Login';
 import SignUp from '../pages/SignUp';
 import CommissionWrite from '../pages/CommissionWrite';
@@ -10,18 +8,19 @@ import CommissionList from '../pages/CommissionList';
 import CommissionDetail from '../pages/CommissionDetail';
 import UserOrders from '../pages/UserOrders';
 import MyPage from '../pages/Mypage';
+import Home from '../pages/Home';
 
-const ProtectedRoute = () => {
+const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
-const PublicOnlyRoute = () => {
+const PublicOnlyRoute: React.FC = () => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? <Navigate to="/" replace /> : <Outlet />;
 };
 
-const Router = () => {
+const Router: React.FC = () => {
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -37,9 +36,9 @@ const Router = () => {
         {/* Protected Routes (for authenticated users) */}
         <Route element={<ProtectedRoute />}>
           <Route path="/mypage/:email" element={<MyPage />} />
-          <Route path="/commissionwrite" element={<commissionWrite />} />
-          <Route path="/commissionlist" element={<commissionList />} />
-          <Route path="/commissiondetail/:id" element={<commissionDetail />} />
+          <Route path="/commissionwrite" element={<CommissionWrite />} />
+          <Route path="/commissionlist" element={<CommissionList />} />
+          <Route path="/commissiondetail/:id" element={<CommissionDetail />} />
           <Route path="/userorders" element={<UserOrders />} />
         </Route>
       </Route>
