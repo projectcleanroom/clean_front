@@ -7,11 +7,11 @@ import EmailInput from "../components/EmailInput";
 import { validatePassword } from "../utils/validationUtils";
 import axios from "axios";
 
-interface User {
+interface Member {
   email: string;
   password: string;
   nick: string;
-  phone_number: string;
+  phoneNumber: string;
   token: string;
 }
 
@@ -51,8 +51,8 @@ const Login: React.FC = () => {
       return;
     }
     try {
-      const response = await axios.get<User[]>(
-        `${serverUrl}/users?email=${formData.email}&password=${formData.password}`
+      const response = await axios.get<Member[]>(
+        `${serverUrl}/Members?email=${formData.email}&password=${formData.password}`
       );
       if (response.data.length > 0) {
         const mockToken = response.data[0].email;

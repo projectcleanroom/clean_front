@@ -35,8 +35,8 @@ export const validateNick = (nick) => {
   return "";
 };
 
-export const validatePhone_number = (phone_number) => {
-  if (!/^\d{10,11}$/.test(phone_number)) {
+export const validatePhoneNumber = (phoneNumber) => {
+  if (!/^\d{10,11}$/.test(phoneNumber)) {
     return "전화번호는 10-11자리의 숫자만 입력 가능합니다.";
   }
   return "";

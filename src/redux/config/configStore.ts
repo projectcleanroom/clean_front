@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import commissionSlice from '../slices/commissionSlice';
-import usersSlice from '../slices/usersSlice';
+import menmbersSlice from '../slices/membersSlice';
 
 const store = configureStore({
   reducer: {
     commission: commissionSlice,
-    users: usersSlice,
+    menmbers: menmbersSlice,
   },
 });
 

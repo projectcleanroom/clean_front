@@ -5,43 +5,43 @@ import axios from "axios";
 import serverUrl from "../redux/config/serverUrl";
 import {
   validateNick,
-  validatePhone_number,
+  validatePhoneNumber,
 } from "../utils/validationUtils";
 
-interface User {
+interface Menmber {
   id: string;
   email: string;
   nick: string;
-  phone_number: string;
+  phoneNumber: string;
 }
 
 interface FormData {
   nick: string;
-  phone_number: string;
+  phoneNumber: string;
 }
 
 interface FormErrors {
   nick: string;
-  phone_number: string;
+  phoneNumber: string;
 }
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentMenmber, setCurrentMenmber] = useState<Menmber | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
     nick: "",
-    phone_number: "",
+    phoneNumber: "",
   });
   const [errors, setErrors] = useState<FormErrors>({
     nick: "",
-    phone_number: "",
+    phoneNumber: "",
   });
 
-  const fetchCurrentUser = useCallback(async () => {
+  const fetchCurrentMenmber = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("인증 토큰이 없습니다.");
@@ -50,23 +50,23 @@ const MyPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.get<User>(`${serverUrl}/users/me`, {
+      const response = await axios.get<Menmber>(`${serverUrl}/menmbers/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       if (response.data) {
-        setCurrentUser(response.data);
+        setCurrentMenmber(response.data);
         setFormData({
           nick: response.data.nick,
-          phone_number: response.data.phone_number,
+          phoneNumber: response.data.phoneNumber,
         });
       } else {
         setError("사용자 정보를 찾을 수 없습니다.");
       }
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("Error fetching menmber data:", error);
       setError("사용자 정보를 불러오는 데 실패했습니다.");
     } finally {
       setIsLoading(false);
@@ -77,9 +77,9 @@ const MyPage: React.FC = () => {
     if (!isAuthenticated) {
       navigate("/login");
     } else {
-      fetchCurrentUser();
+      fetchCurrentMenmber();
     }
-  }, [isAuthenticated, navigate, fetchCurrentUser]);
+  }, [isAuthenticated, navigate, fetchCurrentMenmber]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -87,25 +87,25 @@ const MyPage: React.FC = () => {
 
     if (name === "nick") {
       setErrors(prev => ({ ...prev, nick: validateNick(value) }));
-    } else if (name === "phone_number") {
-      setErrors(prev => ({ ...prev, phone_number: validatePhone_number(value) }));
+    } else if (name === "phoneNumber") {
+      setErrors(prev => ({ ...prev, phoneNumber: validatePhoneNumber(value) }));
     }
   };
 
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (errors.nick || errors.phone_number) {
+    if (errors.nick || errors.phoneNumber) {
       alert("입력한 정보를 다시 확인해주세요.");
       return;
     }
     try {
-      const response = await axios.patch<User>(
-        `${serverUrl}/users/${currentUser?.id}`,
+      const response = await axios.patch<Menmber>(
+        `${serverUrl}/menmbers/${currentMenmber?.id}`,
         formData,
       );
       if (response.status === 200) {
         alert("프로필이 성공적으로 업데이트되었습니다.");
-        fetchCurrentUser();
+        fetchCurrentMenmber();
       } else {
         alert("프로필 업데이트에 실패했습니다.");
       }
@@ -123,7 +123,7 @@ const MyPage: React.FC = () => {
     ) {
       try {
         const response = await axios.delete(
-          `${serverUrl}/users/${currentUser?.id}`,
+          `${serverUrl}/menmbers/${currentMenmber?.id}`,
         );
         if (response.status === 200) {
           logout();
@@ -142,7 +142,7 @@ const MyPage: React.FC = () => {
   if (isLoading) return <div className="mt-8 text-center">Loading...</div>;
   if (error)
     return <div className="mt-8 text-center text-red-500">Error: {error}</div>;
-  if (!currentUser)
+  if (!currentMenmber)
     return (
       <div className="mt-8 text-center">사용자 정보를 불러올 수 없습니다.</div>
     );
@@ -157,7 +157,7 @@ const MyPage: React.FC = () => {
             <input
               type="text"
               name="email"
-              value={currentUser.email}
+              value={currentMenmber.email}
               disabled
               className="w-full rounded border border-gray-300 bg-gray-100 p-2"
             />
@@ -179,13 +179,13 @@ const MyPage: React.FC = () => {
             <label className="mb-1 block">전화번호</label>
             <input
               type="text"
-              name="phone_number"
-              value={formData.phone_number}
+              name="phoneNumber"
+              value={formData.phoneNumber}
               onChange={handleInputChange}
               className="w-full rounded border border-gray-300 p-2"
             />
-            {errors.phone_number && (
-              <p className="mt-1 text-sm text-red-500">{errors.phone_number}</p>
+            {errors.phoneNumber && (
+              <p className="mt-1 text-sm text-red-500">{errors.phoneNumber}</p>
             )}
           </div>
           <div className="flex space-x-4">
