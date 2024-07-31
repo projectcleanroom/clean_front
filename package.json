@@ -10,6 +10,8 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@types/jest": "^29.5.12",
+        "@types/node": "^20.14.12",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },
@@ -34,6 +36,7 @@
         "lodash": "^4.17.21",
         "msw": "^2.3.4",
         "postcss": "^8.4.39",
+        "prettier": "^3.3.3",
         "prettier-plugin-tailwindcss": "^0.6.5",
         "prop-types": "^15.8.1",
         "react-bootstrap": "^2.10.4",

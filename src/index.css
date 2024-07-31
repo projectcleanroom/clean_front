@@ -3,17 +3,18 @@
 @tailwind utilities;
 
 @layer components {
-    .btn {
-        background-color: #0bb8f9;
-        color: #ffffff;
-        padding: 10px;
-        margin: 1px;
-        border-radius: 8px;
-    }
+  .btn {
+    background-color: #0bb8f9;
+    color: #ffffff;
+    padding: 10px;
+    margin: 1px;
+    border-radius: 8px;
+  }
 
-    .h-btn {
-        background-color: none;
-        color: #ffffff;
-        padding: 10px;
-    }
+  .h-btn {
+    background-color: none;
+    color: #ffffff;
+    padding: 10px;
+    @apply px-4 py-2 rounded-xl bg-brand hover:bg-brand-dark transition-colors duration-200;
+  }
 }
