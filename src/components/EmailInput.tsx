@@ -1,18 +1,13 @@
 import { ChangeEvent, useState } from 'react';
-import { validateEmail } from '../utils/validationUtils';
 
 interface EmailInputProps {
   email: string;
   setEmail: (email: string) => void;
-  emailError: string;
-  setEmailError: (error: string) => void;
 }
 
 const EmailInput: React.FC<EmailInputProps> = ({
   email,
   setEmail,
-  emailError,
-  setEmailError,
 }) => {
   const [localPart, setLocalPart] = useState('');
   const [domain, setDomain] = useState('');
@@ -50,7 +45,6 @@ const EmailInput: React.FC<EmailInputProps> = ({
   const updateEmail = (local: string, dmn: string) => {
     const newEmail = local && dmn ? `${local}@${dmn}` : '';
     setEmail(newEmail);
-    setEmailError(validateEmail(newEmail));
   };
 
   return (
@@ -88,7 +82,6 @@ const EmailInput: React.FC<EmailInputProps> = ({
           className="w-full mt-2 p-2 border border-gray-300 rounded"
         />
       )}
-      {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
     </div>
   );
 };

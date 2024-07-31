@@ -30,25 +30,37 @@ type AsyncThunkConfig = {
   rejectValue: string;
 };
 
+const handleApiRequest = async <T>(
+  apiCall: () => Promise<T>,
+  authAxios: AxiosInstance,
+  thunkAPI: any,
+): Promise<T> => {
+  try {
+    return await apiCall();
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      // 토큰 갱신 로직은 AuthContext에서 자동으로 처리되도록 수정
+      const retryResponse = await apiCall();
+      return retryResponse;
+    }
+    return thunkAPI.rejectWithValue(error.response?.data || error.message);
+  }
+};
+
 // 전체 사용자 목록 가져오기
 export const fetchMembers = createAsyncThunk<
   Member[],
   AxiosInstance,
   AsyncThunkConfig
 >('MEMBER_ACTION_TYPES/FETCH_MEMBERS', async (authAxios, thunkAPI) => {
-  try {
-    const response = await authAxios.get<Member[]>(`${serverUrl}/members`);
-    return response.data;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      //토큰 갱신 로직 호출 ( AuthContext에서 제공하는 함수)
-      await thunkAPI.dispatch(refreshToken());
-      //토큰 갱신 후 재시도
-      const retryResponse = await authAxios.get<Member[]>(`${serverUrl}/members`);
-      return retryResponse.data;
-    }
-    return thunkAPI.rejectWithValue(error.response?.data || error.message);
-  }
+  return handleApiRequest(
+    () =>
+      authAxios
+        .get<Member[]>(`${serverUrl}/members`)
+        .then((response) => response.data),
+    authAxios,
+    thunkAPI,
+  );
 });
 
 // 현재 로그인한 사용자 정보 가져오기
@@ -57,17 +69,14 @@ export const fetchCurrentMember = createAsyncThunk<
   AxiosInstance,
   AsyncThunkConfig
 >('MEMBER_ACTION_TYPES/FETCH_CURRENT_MEMBER', async (authAxios, thunkAPI) => {
-  try {
-    const response = await authAxios.get<Member>(`${serverUrl}/Members/me`);
-    return response.data;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      await thunkAPI.dispatch(refreshToken());
-      const retryResponse = await authAxios.get<Member>(`${serverUrl}/Members/me`);
-      return retryResponse.data;
-    }
-    return thunkAPI.rejectWithValue(error.response?.data || error.message);
-  }
+  return handleApiRequest(
+    () =>
+      authAxios
+        .get<Member>(`${serverUrl}/members/me`)
+        .then((response) => response.data),
+    authAxios,
+    thunkAPI,
+  );
 });
 
 // 사용자 정보 수정 (PATCH 사용)
@@ -85,33 +94,16 @@ export const updateMember = createAsyncThunk<
 >(
   MEMBER_ACTION_TYPES.UPDATE_MEMBER,
   async ({ email, nick, phoneNumber, authAxios }, thunkAPI) => {
-    try {
-      const response = await authAxios.patch<Member>(
-        `${serverUrl}/members/${email}`,
-        {
-          nick,
-          phoneNumber,
-        },
-      );
-      return response.data;
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        await thunkAPI.dispatch(refreshToken());
-        const retryResponse = await authAxios.patch<Member>(
-          `${serverUrl}/members/${email}`,
-          {
-            nick,
-            phoneNumber,
-          },
-        );
-        return retryResponse.data;
-      }
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
-    }
+    return handleApiRequest(
+      () =>
+        authAxios
+          .patch<Member>(`${serverUrl}/members/${email}`, { nick, phoneNumber })
+          .then((response) => response.data),
+      authAxios,
+      thunkAPI,
+    );
   },
 );
-
-// 사용자 삭제 (회원 탈퇴)
 
 interface DeleteMemberPayload {
   email: string;
@@ -123,17 +115,14 @@ export const deleteMember = createAsyncThunk<
   DeleteMemberPayload,
   AsyncThunkConfig
 >(MEMBER_ACTION_TYPES.DELETE_MEMBER, async ({ email, authAxios }, thunkAPI) => {
-  try {
-    await authAxios.delete(`${serverUrl}/members/${email}`);
-    return email;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      await thunkAPI.dispatch(refreshToken());
+  return handleApiRequest(
+    async () => {
       await authAxios.delete(`${serverUrl}/members/${email}`);
       return email;
-    }
-    return thunkAPI.rejectWithValue(error.response?.data || error.message);
-  }
+    },
+    authAxios,
+    thunkAPI,
+  );
 });
 
 // 초기 상태
@@ -155,16 +144,19 @@ const membersSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // fetchMembers
-      .addCase(fetchMembers.fulfilled, (state, action: PayloadAction<Member[]>) => {
-        state.members = action.payload.reduce<Record<string, Member>>(
-          (acc, member) => {
-            acc[member.email] = member;
-            return acc;
-          },
-          {},
-        );
-        state.isLoading = false;
-      })
+      .addCase(
+        fetchMembers.fulfilled,
+        (state, action: PayloadAction<Member[]>) => {
+          state.members = action.payload.reduce<Record<string, Member>>(
+            (acc, member) => {
+              acc[member.email] = member;
+              return acc;
+            },
+            {},
+          );
+          state.isLoading = false;
+        },
+      )
       // fetchCurrentMember
       .addCase(
         fetchCurrentMember.fulfilled,
@@ -175,18 +167,24 @@ const membersSlice = createSlice({
         },
       )
       // updateMember
-      .addCase(updateMember.fulfilled, (state, action: PayloadAction<Member>) => {
-        state.members[action.payload.email] = action.payload;
-        state.isLoading = false;
-      })
+      .addCase(
+        updateMember.fulfilled,
+        (state, action: PayloadAction<Member>) => {
+          state.members[action.payload.email] = action.payload;
+          state.isLoading = false;
+        },
+      )
       // deleteMember
-      .addCase(deleteMember.fulfilled, (state, action: PayloadAction<string>) => {
-        delete state.members[action.payload];
-        if (state.currentMemberEmail === action.payload) {
-          state.currentMemberEmail = null;
-        }
-        state.isLoading = false;
-      })
+      .addCase(
+        deleteMember.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          delete state.members[action.payload];
+          if (state.currentMemberEmail === action.payload) {
+            state.currentMemberEmail = null;
+          }
+          state.isLoading = false;
+        },
+      )
       // 모든 pending 액션 처리
       .addMatcher(
         (action) => action.type.endsWith('/pending'),
@@ -197,11 +195,10 @@ const membersSlice = createSlice({
       )
       // 모든 rejected 액션 처리
       .addMatcher(
-        (action): action is RejectedAction<string> =>
-          action.type.endsWith('/rejected'),
-        (state, action) => {
+        (action) => action.type.endsWith(`/rejected`),
+        (state, action: PayloadAction<string>) => {
           state.isLoading = false;
-          state.error = action.payload || action.error.message;
+          state.error = action.payload;
         },
       );
   },

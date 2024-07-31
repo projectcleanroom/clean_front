@@ -4,11 +4,7 @@ import axios, { AxiosError } from 'axios';
 import serverUrl from '../redux/config/serverUrl';
 import logo from '../assets/logo.png';
 import EmailInput from '../components/EmailInput';
-import {
-  validatePassword,
-  validateNick,
-  validatePhoneNumber,
-} from '../utils/validationUtils';
+
 
 interface Member {
   email: string;
@@ -43,20 +39,6 @@ const SignUp: React.FC = () => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setformData((prev) => ({ ...prev, [name]: value }));
-
-    let errorMessage = '';
-    switch (name) {
-      case 'password':
-        errorMessage = validatePassword(value);
-        break;
-      case 'nick':
-        errorMessage = validateNick(value);
-        break;
-      case 'phoneNumber':
-        errorMessage = validatePhoneNumber(value.replace(/[^0-9]/g, ''));
-        break;
-    }
-    setErrors((prev) => ({ ...prev, [name]: errorMessage }));
   };
 
   const signUpSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -70,8 +52,10 @@ const SignUp: React.FC = () => {
     }
     try {
       // 새 사용자 생성
-      const response = await axios.post<Member>(`${serverUrl}/members/signup`, formData);
-
+      const response = await axios.post<Member>(
+        `${serverUrl}/api/members/signup`,
+        formData,
+      );
       if (response.status === 201) {
         alert('회원가입 성공!');
         navigate(`/login`);
@@ -134,7 +118,9 @@ const SignUp: React.FC = () => {
                 <input
                   type={field === 'password' ? 'password' : 'text'}
                   name={field}
-                  value={formData[field as keyof Omit<Member, 'token' | 'email'>]}
+                  value={
+                    formData[field as keyof Omit<Member, 'token' | 'email'>]
+                  }
                   onChange={handleChange}
                   placeholder={`${fieldLabels[field]}를 입력해주세요${field === 'phoneNumber' ? " ('-' 제외)" : ''}`}
                   className="w-full p-2 border border-gray-300 rounded"
