@@ -43,24 +43,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken(accessToken);
     setRefreshToken(refreshToken);
     setIsAuthenticated(!!accessToken);
-    localStorage.setItem('token', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
+    if(accessToken){
+      localStorage.setItem('token', accessToken)
+    } else {
+      localStorage.removeItem('token')
+    }
+    if(refreshToken){
+      localStorage.setItem('refreshToken', refreshToken)
+    } else {
+      localStorage.removeItem('refreshToken')
+    }
   };
 
   const login = (newToken: string, newRefreshToken: string): void => {
-    setToken(newToken, newRefreshToken);
+    setTokens(newToken, newRefreshToken);
   };
 
   const logout = useCallback((): void => {
     setTokens(null, null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
   }, []);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
+    const storedRefreshToken = localStorage.getItem('refreshToken')
     if (storedToken && isTokenValid(storedToken)) {
-      setToken(storedToken);
+      setTokens(storedToken, storedRefreshToken);
       setIsAuthenticated(true);
     } else {
       logout();
@@ -73,9 +80,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await axios.post(`${serverUrl}/refresh`, {
         refreshToken,
       });
-      const { accessToken, refreshToken: newRefreshToken } = response.data;
-      setTokens(accessToken, newRefreshToken);
-      return accessToken;
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+      setTokens(newAccessToken, newRefreshToken);
+      return newAccessToken;
     } catch (error) {
       console.error('Failed to refresh token:', error);
       logout();
@@ -87,21 +94,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     baseURL: serverUrl,
   });
 
+  authAxios.interceptors.request.use(
+    (config) => {
+      if(token){
+        config.headers['Authorization'] = `Bearer ${token}`
+      }
+      return config
+    },
+    (error) => Promise.reject(error)
+  );
+
   authAxios.interceptors.response.use(
     (response) => response,
     async (error) => {
-      if (error.response?.status === 401 && refreshToken) {
+      if(error.response?.status === 401 && refreshToken){
         try {
-          const newToken = await refreshAccessToken();
-          error.config.header['Authorization'] = `Bearer ${newToken}`;
-          return authAxios(error.comfig);
+          const newToken = await refreshAccessToken()
+          error.config.headers['Authorization'] = `Bearer ${newToken}`
+          return authAxios(error.config)
         } catch (refreshError) {
-          return Promise.reject(refreshError);
+          return Promise.reject(refreshError)
         }
       }
-      return Promise.reject(error);
-    },
-  );
+      return Promise.reject(error)
+    }
+  )
 
   const contextValue: AuthContextType = {
     isAuthenticated,

@@ -9,6 +9,7 @@ import CommissionDetail from '../pages/CommissionDetail';
 import UserOrders from '../pages/UserOrders';
 import MyPage from '../pages/Mypage';
 import Home from '../pages/Home';
+import ServicePage from '../pages/ServicePage';
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -26,6 +27,7 @@ const Router: React.FC = () => {
       <Route element={<Layout />}>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
+        <Route path="/service" element={<ServicePage />} />
 
         {/* Public Only Routes (for non-authenticated users) */}
         <Route element={<PublicOnlyRoute />}>
