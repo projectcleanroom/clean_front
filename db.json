@@ -9,6 +9,17 @@
       "id": "506d",
       "title": "zz",
       "body": "zz"
+    },
+    {
+      "id": "e620",
+      "size": 9,
+      "houseType": "ㅁㄴㅇㅁㄴㅇ",
+      "cleanType": "ㅁㄴㅇㅁㄴㅇ",
+      "desiredDate": "",
+      "significant": "ㅁㄴㅇㅁㄴㅇㅁㄴㅇ",
+      "membersId": 1,
+      "image": "default_image",
+      "addressId": 1
     }
   ],
   "users": [
