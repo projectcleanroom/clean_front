@@ -1,20 +1,16 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import serverUrl from '../redux/config/serverUrl';
 import logo from '../assets/logo.png';
 import EmailInput from '../components/EmailInput';
-import {
-  validatePassword,
-  validateNick,
-  validatePhone_number,
-} from '../utils/validationUtils';
 
-interface User {
+
+interface Member {
   email: string;
   password: string;
   nick: string;
-  phone_number: string;
+  phoneNumber: string;
   token: string;
 }
 
@@ -22,41 +18,27 @@ interface FormErrors {
   email: string;
   password: string;
   nick: string;
-  phone_number: string;
+  phoneNumber: string;
 }
 
 const SignUp: React.FC = () => {
-  const [formData, setformData] = useState<Omit<User, 'token'>>({
+  const [formData, setformData] = useState<Omit<Member, 'token'>>({
     email: '',
     password: '',
     nick: '',
-    phone_number: '',
+    phoneNumber: '',
   });
   const [errors, setErrors] = useState<FormErrors>({
     email: '',
     password: '',
     nick: '',
-    phone_number: '',
+    phoneNumber: '',
   });
   const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setformData((prev) => ({ ...prev, [name]: value }));
-
-    let errorMessage = '';
-    switch (name) {
-      case 'password':
-        errorMessage = validatePassword(value);
-        break;
-      case 'nick':
-        errorMessage = validateNick(value);
-        break;
-      case 'phone_number':
-        errorMessage = validatePhone_number(value.replace(/[^0-9]/g, ''));
-        break;
-    }
-    setErrors((prev) => ({ ...prev, [name]: errorMessage }));
   };
 
   const signUpSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -69,22 +51,11 @@ const SignUp: React.FC = () => {
       return;
     }
     try {
-      // 이메일 중복 체크
-      const existingUser = await axios.get<User[]>(
-        `${serverUrl}/users?email=${formData.email}`,
-      );
-      if (existingUser.data.length > 0) {
-        alert('이미 존재하는 이메일입니다.');
-        return;
-      }
-
       // 새 사용자 생성
-      const response = await axios.post<User>(`${serverUrl}/users`, {
-        ...formData,
-        // JSON Server에서는 자동으로 id를 생성하지만, 토큰을 모방하기 위해 임의의 값을 생성합니다.
-        token: Math.random().toString(36).substr(2, 9),
-      });
-
+      const response = await axios.post<Member>(
+        `${serverUrl}/api/members/signup`,
+        formData,
+      );
       if (response.status === 201) {
         alert('회원가입 성공!');
         navigate(`/login`);
@@ -92,15 +63,32 @@ const SignUp: React.FC = () => {
         alert(`회원가입 실패: ${response.statusText}`);
       }
     } catch (error) {
-      console.error(`회원가입 에러`, error);
-      alert(`회원가입 실패: ${error.response?.data?.message || error.message}`);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string }>;
+        if (axiosError.response) {
+          // 서버에서 응답을 받았지만 2XX 범위가 아닌 상태 코드가 반환된 경우
+          alert(
+            `회원가입 실패: ${axiosError.response.data?.message || axiosError.message}`,
+          );
+        } else if (axiosError.request) {
+          // 요청이 이루어졌으나 응답을 받지 못한 경우
+          alert(`서버와의 통신에 실패했습니다. 네트워크 연결을 확인해주세요.`);
+        } else {
+          // 요청을 설정하는 중에 문제가 발생한 경우
+          alert(`요청을 설정 중 오류가 발생했습니다: ${axiosError.message}`);
+        }
+      } else {
+        // 예상치 못한 에러
+        console.error(`unexpected error`, error);
+        alert(`예상치 못한 오류가 발생했습니다.`);
+      }
     }
   };
 
   const fieldLabels: { [key: string]: string } = {
-    'password': '비밀번호',
-    'nick': '닉네임',
-    'phone_number': '전화번호'
+    password: '비밀번호',
+    nick: '닉네임',
+    phoneNumber: '전화번호',
   };
 
   return (
@@ -124,17 +112,17 @@ const SignUp: React.FC = () => {
                 setErrors((prev) => ({ ...prev, email: error }))
               }
             />
-            {['password', 'nick', 'phone_number'].map((field) => (
+            {['password', 'nick', 'phoneNumber'].map((field) => (
               <div key={field}>
-                <label className="block mb-1">
-                  {fieldLabels[field]}
-                </label>
+                <label className="block mb-1">{fieldLabels[field]}</label>
                 <input
                   type={field === 'password' ? 'password' : 'text'}
                   name={field}
-                  value={formData[field as keyof Omit<User, 'token' | 'email'>]}
+                  value={
+                    formData[field as keyof Omit<Member, 'token' | 'email'>]
+                  }
                   onChange={handleChange}
-                  placeholder={`${fieldLabels[field]}를 입력해주세요${field === 'phone_number' ? " ('-' 제외)" : ''}`}
+                  placeholder={`${fieldLabels[field]}를 입력해주세요${field === 'phoneNumber' ? " ('-' 제외)" : ''}`}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
                 {errors[field as keyof FormErrors] && (

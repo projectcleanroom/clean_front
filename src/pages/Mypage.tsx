@@ -1,140 +1,119 @@
-import React, { useEffect, useState, useCallback, FormEvent, ChangeEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/useAuth";
-import axios from "axios";
-import serverUrl from "../redux/config/serverUrl";
-import {
-  validateNick,
-  validatePhone_number,
-} from "../utils/validationUtils";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  FormEvent,
+  ChangeEvent,
+} from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/useAuth';
+import axios from 'axios';
+import serverUrl from '../redux/config/serverUrl';
 
-interface User {
+interface Member {
   id: string;
   email: string;
   nick: string;
-  phone_number: string;
+  phoneNumber: string;
 }
 
 interface FormData {
   nick: string;
-  phone_number: string;
-}
-
-interface FormErrors {
-  nick: string;
-  phone_number: string;
+  phoneNumber: string;
 }
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { isAuthenticated, logout, authAxios } = useAuth();
+  const [currentMenmber, setCurrentMenmber] = useState<Member | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
-    nick: "",
-    phone_number: "",
-  });
-  const [errors, setErrors] = useState<FormErrors>({
-    nick: "",
-    phone_number: "",
+    nick: '',
+    phoneNumber: '',
   });
 
-  const fetchCurrentUser = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("인증 토큰이 없습니다.");
-      setIsLoading(false);
-      return;
-    }
-
+  const fetchCurrentMenmber = useCallback(async () => {
     try {
-      const response = await axios.get<User>(`${serverUrl}/users/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await axios.get<Member>(`${serverUrl}/menmbers/me`);
+      setCurrentMenmber(response.data);
+      setFormData({
+        nick: response.data.nick,
+        phoneNumber: response.data.phoneNumber,
       });
-
-      if (response.data) {
-        setCurrentUser(response.data);
-        setFormData({
-          nick: response.data.nick,
-          phone_number: response.data.phone_number,
-        });
-      } else {
-        setError("사용자 정보를 찾을 수 없습니다.");
-      }
     } catch (error) {
-      console.error("Error fetching user data:", error);
-      setError("사용자 정보를 불러오는 데 실패했습니다.");
+      console.error('Error fetching menmber data:', error);
+      setError('사용자 정보를 불러오는 데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [authAxios]);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate('/login');
     } else {
-      fetchCurrentUser();
+      fetchCurrentMenmber();
     }
-  }, [isAuthenticated, navigate, fetchCurrentUser]);
+  }, [isAuthenticated, navigate, fetchCurrentMenmber]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    if (name === "nick") {
-      setErrors(prev => ({ ...prev, nick: validateNick(value) }));
-    } else if (name === "phone_number") {
-      setErrors(prev => ({ ...prev, phone_number: validatePhone_number(value) }));
-    }
   };
 
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (errors.nick || errors.phone_number) {
-      alert("입력한 정보를 다시 확인해주세요.");
-      return;
-    }
     try {
-      const response = await axios.patch<User>(
-        `${serverUrl}/users/${currentUser?.id}`,
+      const response = await axios.patch<Member>(
+        `${serverUrl}/menmbers/${currentMenmber?.id}`,
         formData,
       );
       if (response.status === 200) {
-        alert("프로필이 성공적으로 업데이트되었습니다.");
-        fetchCurrentUser();
-      } else {
-        alert("프로필 업데이트에 실패했습니다.");
+        alert('프로필이 성공적으로 업데이트되었습니다.');
+        fetchCurrentMenmber();
       }
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("프로필 업데이트에 실패했습니다.");
+    } catch (error: any) {
+      console.error('Error updating profile:', error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        alert(`프로필 업데이트 실패: ${error.response.data.message}`);
+      } else {
+        alert('프로필 업데이트에 실패했습니다.');
+      }
     }
   };
 
   const handleDelete = async () => {
     if (
       window.confirm(
-        "정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+        '정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
       )
     ) {
       try {
         const response = await axios.delete(
-          `${serverUrl}/users/${currentUser?.id}`,
+          `${serverUrl}/menmbers/${currentMenmber?.id}`,
         );
         if (response.status === 200) {
           logout();
-          alert("계정이 성공적으로 삭제되었습니다.");
-          navigate("/");
-        } else {
-          alert("계정 삭제에 실패했습니다.");
+          alert('계정이 성공적으로 삭제되었습니다.');
+          navigate('/');
         }
-      } catch (error) {
-        console.error("Error deleting account:", error);
-        alert("계정 삭제에 실패했습니다.");
+      } catch (error: any) {
+        console.error('Error deleting account:', error);
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          alert(`계정 삭제 실패: ${error.response.data.message}`);
+        } else {
+          alert('계정 삭제에 실패했습니다.');
+        }
       }
     }
   };
@@ -142,7 +121,7 @@ const MyPage: React.FC = () => {
   if (isLoading) return <div className="mt-8 text-center">Loading...</div>;
   if (error)
     return <div className="mt-8 text-center text-red-500">Error: {error}</div>;
-  if (!currentUser)
+  if (!currentMenmber)
     return (
       <div className="mt-8 text-center">사용자 정보를 불러올 수 없습니다.</div>
     );
@@ -157,7 +136,7 @@ const MyPage: React.FC = () => {
             <input
               type="text"
               name="email"
-              value={currentUser.email}
+              value={currentMenmber.email}
               disabled
               className="w-full rounded border border-gray-300 bg-gray-100 p-2"
             />
@@ -171,22 +150,14 @@ const MyPage: React.FC = () => {
               onChange={handleInputChange}
               className="w-full rounded border border-gray-300 p-2"
             />
-            {errors.nick && (
-              <p className="mt-1 text-sm text-red-500">{errors.nick}</p>
-            )}
-          </div>
-          <div>
             <label className="mb-1 block">전화번호</label>
             <input
               type="text"
-              name="phone_number"
-              value={formData.phone_number}
+              name="phoneNumber"
+              value={formData.phoneNumber}
               onChange={handleInputChange}
               className="w-full rounded border border-gray-300 p-2"
             />
-            {errors.phone_number && (
-              <p className="mt-1 text-sm text-red-500">{errors.phone_number}</p>
-            )}
           </div>
           <div className="flex space-x-4">
             <button
