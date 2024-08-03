@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  __updateCommission,
-  __fetchCommissions,
+  updateCommission,
+  fetchCommission,
 } from '../redux/slices/commissionSlice';
 import { AppDispatch, RootState } from '../redux/config/configStore';
+import { useAuth } from '../context/useAuth';
 
 interface CommissionDetailProps {}
 
@@ -13,6 +14,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { authAxios } = useAuth();
   const { commissions, isLoading, error } = useSelector(
     (state: RootState) => state.commission,
   );
@@ -27,10 +29,12 @@ const CommissionDetail: React.FC<CommissionDetailProps> = () => {
   const [updateError, setUpdateError] = useState<string | null>(null);
 
   useEffect(() => {
-    dispatch(__fetchCommissions());
-  }, [dispatch]);
+    if (id) {
+      dispatch(fetchCommission({ id: Number(id), authAxios }));
+    }
+  }, [dispatch, id, authAxios]);
 
-  const commission = commissions.find((c) => c.commissionId === Number(id));
+  const commission = commissions[Number(id)];
 
   useEffect(() => {
     if (commission) {
@@ -49,12 +53,15 @@ const CommissionDetail: React.FC<CommissionDetailProps> = () => {
     setUpdateError(null);
     try {
       await dispatch(
-        __updateCommission({
-          commissionId: Number(id),
-          ...editedCommission,
-          membersId: 1,
-          image: 'default_image',
-          addressId: 1,
+        updateCommission({
+          id: Number(id),
+          commission: {
+            ...editedCommission,
+            membersId: 1,
+            image: 'default_image',
+            addressId: 1,
+          },
+          authAxios,
         }),
       ).unwrap();
       setIsEditing(false);
@@ -66,16 +73,16 @@ const CommissionDetail: React.FC<CommissionDetailProps> = () => {
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
-  if (!commission) return <p>commission not found</p>;
+  if (!commission) return <p>Commission not found</p>;
 
   return (
     <div>
-      <h1>commission Detail</h1>
+      <h1>Commission Detail</h1>
       {updateError && <p style={{ color: 'red' }}>{updateError}</p>}
       {isEditing ? (
         <form onSubmit={handleUpdate}>
           <div>
-            <label>Title:</label>
+            <label>Size:</label>
             <input
               type="number"
               value={editedCommission.size}
@@ -96,7 +103,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = () => {
               onChange={(e) =>
                 setEditedCommission({
                   ...editedCommission,
-                  size: Number(e.target.value),
+                  houseType: e.target.value,
                 })
               }
               required
@@ -110,7 +117,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = () => {
               onChange={(e) =>
                 setEditedCommission({
                   ...editedCommission,
-                  size: Number(e.target.value),
+                  cleanType: e.target.value,
                 })
               }
               required
@@ -124,7 +131,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = () => {
               onChange={(e) =>
                 setEditedCommission({
                   ...editedCommission,
-                  size: Number(e.target.value),
+                  desiredDate: e.target.value,
                 })
               }
               required
@@ -137,7 +144,7 @@ const CommissionDetail: React.FC<CommissionDetailProps> = () => {
               onChange={(e) =>
                 setEditedCommission({
                   ...editedCommission,
-                  size: Number(e.target.value),
+                  significant: e.target.value,
                 })
               }
               required

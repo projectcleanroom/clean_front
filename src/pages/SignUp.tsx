@@ -1,7 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
-import serverUrl from '../redux/config/serverUrl';
 import logo from '../assets/logo.png';
 import EmailInput from '../components/EmailInput';
 
@@ -53,7 +52,7 @@ const SignUp: React.FC = () => {
     try {
       // 새 사용자 생성
       const response = await axios.post<Member>(
-        `${serverUrl}/api/members/signup`,
+        `/api/members/signup`,
         formData,
       );
       if (response.status === 201) {

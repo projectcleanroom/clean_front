@@ -6,7 +6,6 @@ import {
   ReactNode,
 } from 'react';
 import axios, { AxiosInstance } from 'axios';
-import serverUrl from '../redux/config/serverUrl';
 
 export interface AuthContextType {
   isAuthenticated: boolean;
@@ -77,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refreshAccessToken = async (): Promise<string> => {
     try {
-      const response = await axios.post(`${serverUrl}/refresh`, {
+      const response = await axios.post(`/refresh`, {
         refreshToken,
       });
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
@@ -91,7 +90,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const authAxios = axios.create({
-    baseURL: serverUrl,
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+    },
   });
 
   authAxios.interceptors.request.use(
@@ -99,6 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if(token){
         config.headers['Authorization'] = `Bearer ${token}`
       }
+      console.log('Request config:', config);
       return config
     },
     (error) => Promise.reject(error)
