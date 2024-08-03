@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
-import serverUrl from '../config/serverUrl';
 
 // Member 인터페이스 정의
 interface Member {
@@ -56,7 +55,7 @@ export const fetchMembers = createAsyncThunk<
   return handleApiRequest(
     () =>
       authAxios
-        .get<Member[]>(`${serverUrl}/members`)
+        .get<Member[]>(`/members`)
         .then((response) => response.data),
     authAxios,
     thunkAPI,
@@ -72,7 +71,7 @@ export const fetchCurrentMember = createAsyncThunk<
   return handleApiRequest(
     () =>
       authAxios
-        .get<Member>(`${serverUrl}/members/me`)
+        .get<Member>(`/members/me`)
         .then((response) => response.data),
     authAxios,
     thunkAPI,
@@ -97,7 +96,7 @@ export const updateMember = createAsyncThunk<
     return handleApiRequest(
       () =>
         authAxios
-          .patch<Member>(`${serverUrl}/members/${email}`, { nick, phoneNumber })
+          .patch<Member>(`/members/${email}`, { nick, phoneNumber })
           .then((response) => response.data),
       authAxios,
       thunkAPI,
@@ -117,7 +116,7 @@ export const deleteMember = createAsyncThunk<
 >(MEMBER_ACTION_TYPES.DELETE_MEMBER, async ({ email, authAxios }, thunkAPI) => {
   return handleApiRequest(
     async () => {
-      await authAxios.delete(`${serverUrl}/members/${email}`);
+      await authAxios.delete(`/members/${email}`);
       return email;
     },
     authAxios,

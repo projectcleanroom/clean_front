@@ -1,7 +1,6 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
-import serverUrl from '../redux/config/serverUrl';
 import logo from '../assets/logo.png';
 import EmailInput from '../components/EmailInput';
 import axios from 'axios';
@@ -42,7 +41,7 @@ const Login: React.FC = () => {
     }
     try {
       const response = await axios.post(
-        `${serverUrl}/api/members/login`,
+        `/api/members/login`,
         formData,
         { withCredentials: true },
       );
