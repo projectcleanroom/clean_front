@@ -1,16 +1,19 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios, { AxiosError } from 'axios';
 import logo from '../assets/logo.png';
 import EmailInput from '../components/EmailInput';
+import { useSignup } from '../hooks/useMembers';
+import {
+  validateNickName,
+  validatePassword,
+  validatePhoneNumber,
+} from '../utils/validationUtils';
 
-
-interface Member {
+interface SignUpForm {
   email: string;
   password: string;
   nick: string;
   phoneNumber: string;
-  token: string;
 }
 
 interface FormErrors {
@@ -18,10 +21,11 @@ interface FormErrors {
   password: string;
   nick: string;
   phoneNumber: string;
+  general?: string;
 }
 
 const SignUp: React.FC = () => {
-  const [formData, setformData] = useState<Omit<Member, 'token'>>({
+  const [formData, setFormData] = useState<SignUpForm>({
     email: '',
     password: '',
     nick: '',
@@ -34,60 +38,49 @@ const SignUp: React.FC = () => {
     phoneNumber: '',
   });
   const navigate = useNavigate();
+  const signupMutation = useSignup();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setformData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    let validationResult;
+    switch (name) {
+      case 'password':
+        validationResult = validatePassword(value);
+        break;
+      case 'nick':
+        validationResult = validateNickName(value);
+        break;
+      case 'phoneNumber':
+        validationResult = validatePhoneNumber(value);
+        break;
+      default:
+        return;
+    }
+    setErrors((prev) => ({ ...prev, [name]: validationResult.message }));
   };
 
   const signUpSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (
-      Object.values(formData).some((val) => !val) ||
-      Object.values(errors).some((err) => err)
-    ) {
-      alert('입력한 정보를 다시 확인해주세요.');
+    if (Object.values(errors).some((err) => err !== '')) {
+      setErrors((prev) => ({
+        ...prev,
+        general: '입력한 정보를 다시 확인해주세요.',
+      }));
       return;
     }
-    try {
-      // 새 사용자 생성
-      const response = await axios.post<Member>(
-        `/api/members/signup`,
-        formData,
-      );
-      if (response.status === 201) {
-        alert('회원가입 성공!');
-        navigate(`/login`);
-      } else {
-        alert(`회원가입 실패: ${response.statusText}`);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string }>;
-        if (axiosError.response) {
-          // 서버에서 응답을 받았지만 2XX 범위가 아닌 상태 코드가 반환된 경우
-          alert(
-            `회원가입 실패: ${axiosError.response.data?.message || axiosError.message}`,
-          );
-        } else if (axiosError.request) {
-          // 요청이 이루어졌으나 응답을 받지 못한 경우
-          alert(`서버와의 통신에 실패했습니다. 네트워크 연결을 확인해주세요.`);
-        } else {
-          // 요청을 설정하는 중에 문제가 발생한 경우
-          alert(`요청을 설정 중 오류가 발생했습니다: ${axiosError.message}`);
-        }
-      } else {
-        // 예상치 못한 에러
-        console.error(`unexpected error`, error);
-        alert(`예상치 못한 오류가 발생했습니다.`);
-      }
-    }
-  };
 
-  const fieldLabels: { [key: string]: string } = {
-    password: '비밀번호',
-    nick: '닉네임',
-    phoneNumber: '전화번호',
+    try {
+      await signupMutation.mutateAsync(formData);
+      navigate(`/login`);
+    } catch (error) {
+      console.error('signup error:', error);
+      setErrors((prev) => ({
+        ...prev,
+        general: '회원가입에 실패했습니다. 다시 시도해주세요.',
+      }));
+    }
   };
 
   return (
@@ -102,10 +95,18 @@ const SignUp: React.FC = () => {
         </div>
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-4">회원가입</h2>
+          {errors.general && (
+            <div
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+              role="alert"
+            >
+              <span className="block sm:inline">{errors.general}</span>
+            </div>
+          )}
           <form onSubmit={signUpSubmit} className="space-y-4">
             <EmailInput
               email={formData.email}
-              setEmail={(email) => setformData((prev) => ({ ...prev, email }))}
+              setEmail={(email) => setFormData((prev) => ({ ...prev, email }))}
               emailError={errors.email}
               setEmailError={(error) =>
                 setErrors((prev) => ({ ...prev, email: error }))
@@ -113,15 +114,19 @@ const SignUp: React.FC = () => {
             />
             {['password', 'nick', 'phoneNumber'].map((field) => (
               <div key={field}>
-                <label className="block mb-1">{fieldLabels[field]}</label>
+                <label className="block mb-1">
+                  {field === 'password'
+                    ? '비밀번호'
+                    : field === 'nick'
+                      ? '닉네임'
+                      : '전화번호'}
+                </label>
                 <input
                   type={field === 'password' ? 'password' : 'text'}
                   name={field}
-                  value={
-                    formData[field as keyof Omit<Member, 'token' | 'email'>]
-                  }
+                  value={formData[field as keyof SignUpForm]}
                   onChange={handleChange}
-                  placeholder={`${fieldLabels[field]}를 입력해주세요${field === 'phoneNumber' ? " ('-' 제외)" : ''}`}
+                  placeholder={`${field === 'password' ? '비밀번호를 입력해주세요.' : field === 'nick' ? '닉네임을 입력해주세요.' : "전화번호를 입력해주세요('-' 제외)"}`}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
                 {errors[field as keyof FormErrors] && (
