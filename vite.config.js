@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://43.202.40.73',
+        target: 'https://data.clean-room.co.kr',
         changeOrigin: true,
         rewrite: (path) => path,
       },
