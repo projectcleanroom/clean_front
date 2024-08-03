@@ -8,7 +8,6 @@ import React, {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import axios from 'axios';
-import serverUrl from '../redux/config/serverUrl';
 
 interface Member {
   id: string;
@@ -36,7 +35,7 @@ const MyPage: React.FC = () => {
 
   const fetchCurrentMenmber = useCallback(async () => {
     try {
-      const response = await axios.get<Member>(`${serverUrl}/menmbers/me`);
+      const response = await axios.get<Member>(`/menmbers/me`);
       setCurrentMenmber(response.data);
       setFormData({
         nick: response.data.nick,
@@ -67,7 +66,7 @@ const MyPage: React.FC = () => {
     e.preventDefault();
     try {
       const response = await axios.patch<Member>(
-        `${serverUrl}/menmbers/${currentMenmber?.id}`,
+        `/menmbers/${currentMenmber?.id}`,
         formData,
       );
       if (response.status === 200) {
@@ -96,7 +95,7 @@ const MyPage: React.FC = () => {
     ) {
       try {
         const response = await axios.delete(
-          `${serverUrl}/menmbers/${currentMenmber?.id}`,
+          `/menmbers/${currentMenmber?.id}`,
         );
         if (response.status === 200) {
           logout();
