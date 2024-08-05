@@ -7,9 +7,9 @@ import {
   selectAllCommissions,
   selectCommissionsLoading,
   selectCommissionsError
-} from '../redux/slices/commissionSlice';
-import { AppDispatch } from '../redux/config/configStore';
-import { useAuth } from '../context/useAuth';
+} from '../../redux/slices/commissionSlice';
+import { AppDispatch } from '../../redux/config/configStore';
+import { useAuth } from '../../context/useAuth';
 
 const CommissionList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

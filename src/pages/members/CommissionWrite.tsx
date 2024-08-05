@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { createCommission } from '../redux/slices/commissionSlice';
-import { AppDispatch } from '../redux/config/configStore';
-import { useAuth } from '../context/useAuth';
+import { createCommission } from '../../redux/slices/commissionSlice';
+import { AppDispatch } from '../../redux/config/configStore';
+import { useAuth } from '../../context/useAuth';
 
 const CommissionWrite: React.FC = () => {
   const navigate = useNavigate();

@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   updateCommission,
   fetchCommission,
-} from '../redux/slices/commissionSlice';
-import { AppDispatch, RootState } from '../redux/config/configStore';
-import { useAuth } from '../context/useAuth';
+} from '../../redux/slices/commissionSlice';
+import { AppDispatch, RootState } from '../../redux/config/configStore';
+import { useAuth } from '../../context/useAuth';
 
 interface CommissionDetailProps {}
 

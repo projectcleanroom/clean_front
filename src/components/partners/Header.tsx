@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
+import { useAuth } from '../../context/useAuth';
 import icon from '../assets/icon.png'
 const Header: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -54,11 +54,11 @@ const Header: React.FC = () => {
           ) : (
             <>
               <button className="h-btn text-2xl" onClick={() => navigate('/login')}>
-                Log In
+                회원 로그인
               </button>
               <div className="w-px h-6 bg-white mx-2"></div>
-              <button className="h-btn text-2xl" onClick={() => navigate('/signup')}>
-                회원가입
+              <button className="h-btn text-2xl" onClick={() => navigate('/partnerLogin')}>
+                파트너 로그인
               </button>
             </>
           )}

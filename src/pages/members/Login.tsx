@@ -1,8 +1,8 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
-import logo from '../assets/logo.png';
-import EmailInput from '../components/EmailInput';
+import { useAuth } from '../../context/useAuth';
+import logo from '../../assets/logo.png';
+import EmailInput from '../../components/members/EmailInput';
 import axios from 'axios';
 
 interface LoginForm {
