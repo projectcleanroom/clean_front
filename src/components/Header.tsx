@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
-import icon from '../assets/icon.png'
+import icon from '../assets/icon.png';
+
 const Header: React.FC = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, member } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -26,7 +27,10 @@ const Header: React.FC = () => {
           <button className="h-btn" onClick={() => navigate('/service')}>
             서비스 알아보기
           </button>
-          <button className="h-btn" onClick={() => navigate('/commissionwrite')}>
+          <button
+            className="h-btn"
+            onClick={() => navigate('/commissionwrite')}
+          >
             의뢰작성하기
           </button>
           <button className="h-btn" onClick={() => navigate('/commissionlist')}>
@@ -42,22 +46,28 @@ const Header: React.FC = () => {
             <>
               <button
                 className="h-btn"
-                onClick={() => navigate('/mypage/:email')}
+                onClick={() => navigate(`/memberinfo/${member?.email}`)}
               >
                 마이 페이지
               </button>
               <div className="w-px h-6 bg-white mx-2"></div>
               <button className="h-btn" onClick={handleLogout}>
-                Log Out
+                로그아웃
               </button>
             </>
           ) : (
             <>
-              <button className="h-btn text-2xl" onClick={() => navigate('/login')}>
-                Log In
+              <button
+                className="h-btn text-2xl"
+                onClick={() => navigate('/login')}
+              >
+                로그인
               </button>
               <div className="w-px h-6 bg-white mx-2"></div>
-              <button className="h-btn text-2xl" onClick={() => navigate('/signup')}>
+              <button
+                className="h-btn text-2xl"
+                onClick={() => navigate('/signup')}
+              >
                 회원가입
               </button>
             </>

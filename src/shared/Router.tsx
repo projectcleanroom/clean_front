@@ -7,7 +7,8 @@ import CommissionWrite from '../pages/CommissionWrite';
 import CommissionList from '../pages/CommissionList';
 import CommissionDetail from '../pages/CommissionDetail';
 import UserOrders from '../pages/UserOrders';
-import MyPage from '../pages/Mypage';
+import MemberInfo from '../pages/MemberInfo';
+import MemberEdit from '../pages/MemberEdit';
 import Home from '../pages/Home';
 import ServicePage from '../pages/ServicePage';
 
@@ -37,7 +38,8 @@ const Router: React.FC = () => {
 
         {/* Protected Routes (for authenticated users) */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/mypage/:email" element={<MyPage />} />
+          <Route path="/member/:email" element={<MemberInfo />} />
+          <Route path="/member/:email/edit" element={<MemberEdit />} />
           <Route path="/commissionwrite" element={<CommissionWrite />} />
           <Route path="/commissionlist" element={<CommissionList />} />
           <Route path="/commissiondetail/:id" element={<CommissionDetail />} />

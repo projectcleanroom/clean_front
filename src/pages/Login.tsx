@@ -5,9 +5,10 @@ import logo from '../assets/logo.png';
 import EmailInput from '../components/EmailInput';
 import { useLogin } from '../hooks/useMembers';
 import { validatePassword } from '../utils/validationUtils';
+import { Member } from '../types/member';
 
 interface LoginForm {
-  email: string;
+  email: Member['email'];
   password: string;
 }
 
@@ -47,6 +48,7 @@ const Login: React.FC = () => {
 
     try {
       const { token, refreshToken } = await loginMutation.mutateAsync(formData);
+      console.log('Login result:', { token, refreshToken });
       authLogin(token, refreshToken);
       navigate('/');
     } catch (error) {
