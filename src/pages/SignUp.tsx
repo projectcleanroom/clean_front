@@ -3,17 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import EmailInput from '../components/EmailInput';
 import { useSignup } from '../hooks/useMembers';
+import { Member } from '../types/member';
 import {
   validateNickName,
   validatePassword,
   validatePhoneNumber,
 } from '../utils/validationUtils';
 
-interface SignUpForm {
-  email: string;
+interface SignUpForm extends Omit<Member, 'id'> {
   password: string;
-  nick: string;
-  phoneNumber: string;
 }
 
 interface FormErrors {
