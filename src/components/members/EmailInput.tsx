@@ -1,13 +1,18 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { validateEmail } from '../utils/validationUtils';
 
 interface EmailInputProps {
   email: string;
   setEmail: (email: string) => void;
+  emailError: string;
+  setEmailError: (error: string) => void;
 }
 
 const EmailInput: React.FC<EmailInputProps> = ({
   email,
   setEmail,
+  emailError,
+  setEmailError,
 }) => {
   const [localPart, setLocalPart] = useState('');
   const [domain, setDomain] = useState('');
@@ -21,9 +26,19 @@ const EmailInput: React.FC<EmailInputProps> = ({
     'nate.com',
   ];
 
+  useEffect(() => {
+    const parts = email.split('@');
+    if (parts.length === 2) {
+      setLocalPart(parts[0]);
+      if (commonDomains.includes(parts[1])) {
+        setDomain(parts[1]);
+      }
+    }
+  }, [email]);
+
   const handleLocalPartChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLocalPart(e.target.value);
-    updateEmail(e.target.value, domain);
+    updateEmail(e.target.value, domain === 'custom' ? customDomain : domain);
   };
 
   const handleDomainChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -45,6 +60,8 @@ const EmailInput: React.FC<EmailInputProps> = ({
   const updateEmail = (local: string, dmn: string) => {
     const newEmail = local && dmn ? `${local}@${dmn}` : '';
     setEmail(newEmail);
+    const validationResult = validateEmail(newEmail);
+    setEmailError(validationResult.message);
   };
 
   return (
@@ -56,13 +73,13 @@ const EmailInput: React.FC<EmailInputProps> = ({
           value={localPart}
           onChange={handleLocalPartChange}
           placeholder="이메일 아이디"
-          className="w-1/2 p-2 border border-gray-300 rounded-l"
+          className={`w-1/2 p-2 border ${emailError ? 'border-red-500' : 'border-gray-300'} rounded-l`}
         />
         <span className="p-2 bg-gray-100 border-t border-b">@</span>
         <select
           value={domain}
           onChange={handleDomainChange}
-          className="w-1/2 p-2 border border-gray-300 rounded-r"
+          className={`w-1/2 p-2 border ${emailError ? 'border-red-500' : 'border-gray-300'} rounded-r`}
         >
           <option value="">선택해주세요</option>
           {commonDomains.map((d) => (
@@ -79,9 +96,10 @@ const EmailInput: React.FC<EmailInputProps> = ({
           value={customDomain}
           onChange={handleCustomDomainChange}
           placeholder="도메인을 입력해주세요"
-          className="w-full mt-2 p-2 border border-gray-300 rounded"
+          className={`w-full mt-2 p-2 border ${emailError ? 'border-red-500' : 'border-gray-300'} rounded`}
         />
       )}
+      {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
     </div>
   );
 };

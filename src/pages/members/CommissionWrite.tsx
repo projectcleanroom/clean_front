@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { createCommission } from '../../redux/slices/commissionSlice';
-import { AppDispatch } from '../../redux/config/configStore';
-import { useAuth } from '../../context/useAuth';
+
+import { useCreateCommission } from '../hooks/useCommissions';
 
 const CommissionWrite: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const { authAxios } = useAuth();
+  const createCommissionMutation = useCreateCommission();
 
   const [form, setForm] = useState({
     size: '',
@@ -20,14 +17,16 @@ const CommissionWrite: React.FC = () => {
     significant: '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const newCommission = {
         size: Number(form.size),
@@ -39,23 +38,10 @@ const CommissionWrite: React.FC = () => {
         significant: form.significant,
       };
 
-      console.log('Sending commission data:', newCommission);
-      console.log('Submitting commission:', form);
-      const result = await dispatch(createCommission({ arg: newCommission, authAxios })).unwrap();
-      console.log('Commission created:', result);
+      await createCommissionMutation.mutateAsync(newCommission);
       navigate('/service');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to create commission:', error);
-      if (error.response) {
-        console.error('Server response:', error.response.data);
-        console.error('Status code:', error.response.status);
-        console.error('Headers:', error.response.headers);
-      } else if (error.request) {
-        console.error('No response received:', error.request);
-      } else {
-        console.error('Error setting up request:', error.message);
-      }
-      console.error('Error config:', error.config);
     }
   };
 
@@ -145,10 +131,18 @@ const CommissionWrite: React.FC = () => {
           <button
             className="w-full bg-[#0bb8f9] text-white py-2 px-4 rounded hover:bg-blue-600"
             type="submit"
+            disabled={createCommissionMutation.isLoading}
           >
-            의뢰 작성 완료하기
+            {createCommissionMutation.isLoading
+              ? '처리 중...'
+              : '의뢰 작성 완료하기'}
           </button>
         </form>
+        {createCommissionMutation.isError && (
+          <div className="mt-4 text-red-500">
+            의뢰 작성에 실패했습니다. 다시 시도해주세요.
+          </div>
+        )}
       </div>
     </div>
   );
