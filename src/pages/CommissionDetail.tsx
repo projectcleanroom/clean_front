@@ -1,179 +1,173 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  updateCommission,
-  fetchCommission,
-} from '../redux/slices/commissionSlice';
-import { AppDispatch, RootState } from '../redux/config/configStore';
-import { useAuth } from '../context/useAuth';
+import { useCommission, useUpdateCommission } from '../hooks/useCommissions';
+import { Commission, HouseType, CleanType } from '../types/commission';
 
-interface CommissionDetailProps {}
-
-const CommissionDetail: React.FC<CommissionDetailProps> = () => {
+const CommissionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const { authAxios } = useAuth();
-  const { commissions, isLoading, error } = useSelector(
-    (state: RootState) => state.commission,
-  );
+  const commissionId = Number(id);
+  const {
+    data: commission,
+    isLoading,
+    error,
+  } = useCommission(commissionId) as {
+    data: Commission | undefined;
+    isLoading: boolean;
+    error: Error | null;
+  };
+  const updateCommissionMutation = useUpdateCommission();
+
   const [isEditing, setIsEditing] = useState(false);
-  const [editedCommission, setEditedCommission] = useState({
-    size: 0,
-    houseType: '',
-    cleanType: '',
-    desiredDate: '',
-    significant: '',
-  });
-  const [updateError, setUpdateError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchCommission({ id: Number(id), authAxios }));
-    }
-  }, [dispatch, id, authAxios]);
-
-  const commission = commissions[Number(id)];
+  const [editedCommission, setEditedCommission] = useState<
+    Commission | undefined
+  >(undefined);
 
   useEffect(() => {
     if (commission) {
-      setEditedCommission({
-        size: commission.size,
-        houseType: commission.houseType,
-        cleanType: commission.cleanType,
-        desiredDate: commission.desiredDate,
-        significant: commission.significant,
-      });
+      setEditedCommission(commission);
     }
   }, [commission]);
 
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+  if (!commission) return <p>Commission not found</p>;
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setUpdateError(null);
+    if (!editedCommission) return;
+
     try {
-      await dispatch(
-        updateCommission({
-          id: Number(id),
-          commission: {
-            ...editedCommission,
-            membersId: 1,
-            image: 'default_image',
-            addressId: 1,
-          },
-          authAxios,
-        }),
-      ).unwrap();
+      await updateCommissionMutation.mutateAsync({
+        id: commissionId,
+        commission: editedCommission,
+      });
       setIsEditing(false);
     } catch (error) {
       console.error('Update failed:', error);
-      setUpdateError(`Update failed: ${error}`);
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (!commission) return <p>Commission not found</p>;
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setEditedCommission((prev) => (prev ? { ...prev, [name]: value } : undefined));
+  };
 
   return (
-    <div>
-      <h1>Commission Detail</h1>
-      {updateError && <p style={{ color: 'red' }}>{updateError}</p>}
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Commission Detail</h1>
       {isEditing ? (
-        <form onSubmit={handleUpdate}>
+        <form onSubmit={handleUpdate} className="space-y-4">
           <div>
-            <label>Size:</label>
+            <label className="block mb-1">Size (m²)</label>
             <input
               type="number"
-              value={editedCommission.size}
-              onChange={(e) =>
-                setEditedCommission({
-                  ...editedCommission,
-                  size: Number(e.target.value),
-                })
-              }
-              required
+              name="size"
+              value={editedCommission?.size || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 border rounded"
             />
           </div>
           <div>
-            <label>House Type:</label>
+            <label className="block mb-1">House Type</label>
+            <select
+              name="houseType"
+              value={editedCommission?.houseType || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 border rounded"
+            >
+              {Object.values(HouseType).map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1">Clean Type</label>
+            <select
+              name="cleanType"
+              value={editedCommission?.cleanType || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 border rounded"
+            >
+              {Object.values(CleanType).map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1">Desired Date</label>
             <input
-              type="text"
-              value={editedCommission.houseType}
-              onChange={(e) =>
-                setEditedCommission({
-                  ...editedCommission,
-                  houseType: e.target.value,
-                })
-              }
-              required
+              type="date"
+              name="desiredDate"
+              value={editedCommission?.desiredDate?.split('T')[0] || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 border rounded"
             />
           </div>
           <div>
-            <label>Clean Type:</label>
-            <input
-              type="text"
-              value={editedCommission.cleanType}
-              onChange={(e) =>
-                setEditedCommission({
-                  ...editedCommission,
-                  cleanType: e.target.value,
-                })
-              }
-              required
-            />
-          </div>
-          <div>
-            <label>Desired Date:</label>
-            <input
-              type="datetime-local"
-              value={editedCommission.desiredDate}
-              onChange={(e) =>
-                setEditedCommission({
-                  ...editedCommission,
-                  desiredDate: e.target.value,
-                })
-              }
-              required
-            />
-          </div>
-          <div>
-            <label>Significant:</label>
+            <label className="block mb-1">Significant Details</label>
             <textarea
-              value={editedCommission.significant}
-              onChange={(e) =>
-                setEditedCommission({
-                  ...editedCommission,
-                  significant: e.target.value,
-                })
-              }
-              required
+              name="significant"
+              value={editedCommission?.significant || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 border rounded"
+              rows={4}
             />
           </div>
-          <button className="btn" type="submit">
-            Save Changes
-          </button>
-          <button
-            className="btn"
-            type="button"
-            onClick={() => setIsEditing(false)}
-          >
-            Cancel
-          </button>
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Save Changes
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsEditing(false)}
+              className="bg-gray-300 px-4 py-2 rounded"
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       ) : (
-        <>
-          <h2>Size: {commission.size}</h2>
-          <p>House Type: {commission.houseType}</p>
-          <p>Clean Type: {commission.cleanType}</p>
-          <p>Desired Date: {commission.desiredDate}</p>
-          <p>Significant: {commission.significant}</p>
-          <button className="btn" onClick={() => setIsEditing(true)}>
+        <div className="space-y-4">
+          <p>
+            <strong>Size:</strong> {commission.size} m²
+          </p>
+          <p>
+            <strong>House Type:</strong> {commission.houseType}
+          </p>
+          <p>
+            <strong>Clean Type:</strong> {commission.cleanType}
+          </p>
+          <p>
+            <strong>Desired Date:</strong>{' '}
+            {new Date(commission.desiredDate).toLocaleDateString()}
+          </p>
+          <p>
+            <strong>Significant Details:</strong> {commission.significant}
+          </p>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
             Edit
           </button>
-        </>
+        </div>
       )}
-      <button className="btn" onClick={() => navigate('/commissionlist')}>
+      <button
+        onClick={() => navigate('/commissionlist')}
+        className="mt-4 bg-gray-300 px-4 py-2 rounded"
+      >
         Back to List
       </button>
     </div>
