@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
-import icon from '../assets/icon.png';
-
+import { useAuth } from '../../context/useAuth';
+import icon from '../assets/icon.png'
 const Header: React.FC = () => {
   const { isAuthenticated, logout, member } = useAuth();
   const navigate = useNavigate();
@@ -57,17 +56,11 @@ const Header: React.FC = () => {
             </>
           ) : (
             <>
-              <button
-                className="h-btn text-2xl"
-                onClick={() => navigate('/login')}
-              >
-                로그인
+              <button className="h-btn text-2xl" onClick={() => navigate('/login')}>
+                Log In
               </button>
               <div className="w-px h-6 bg-white mx-2"></div>
-              <button
-                className="h-btn text-2xl"
-                onClick={() => navigate('/signup')}
-              >
+              <button className="h-btn text-2xl" onClick={() => navigate('/signup')}>
                 회원가입
               </button>
             </>

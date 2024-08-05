@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import gavageRoom from "../assets/gavageRoom.png"
-import cleanExpress from "../assets/cleanExpress.png"
-import cleanLiving from "../assets/cleanLiving.png"
+import gavageRoom from "../../assets/gavageRoom.png"
+import cleanExpress from "../../assets/cleanExpress.png"
+import cleanLiving from "../../assets/cleanLiving.png"
 
 const ServicePage: React.FC = () => {
   const navigate = useNavigate()
