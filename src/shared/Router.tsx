@@ -12,7 +12,6 @@ import MemberInfo from '../pages/MemberInfo';
 import MemberEdit from '../pages/MemberEdit';
 import Home from '../pages/Home';
 import ServicePage from '../pages/ServicePage';
->>>>>>> 3623056dc95373d57833d634698a39a285945662
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAuth();
