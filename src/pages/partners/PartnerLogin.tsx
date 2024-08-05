@@ -1,62 +1,68 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
-import logo from '../assets/logo.png';
-import EmailInput from '../components/EmailInput';
-import { useLogin } from '../hooks/useMembers';
-import { validatePassword } from '../utils/validationUtils';
-import { Member } from '../types/member';
+import { useAuth } from '../../context/useAuth';
+import logo from '../../assets/logo.png';
+import EmailInput from '../../components/members/EmailInput';
+import axios from 'axios';
 
 interface LoginForm {
-  email: Member['email'];
+  email: string;
   password: string;
 }
 
 interface FormErrors {
   email: string;
   password: string;
-  general?: string
 }
 
-const Login: React.FC = () => {
+const PartnerLogin: React.FC = () => {
   const [formData, setFormData] = useState<LoginForm>({
     email: '',
     password: '',
   });
   const [errors, setErrors] = useState<FormErrors>({ email: '', password: '' });
-  const { login: authLogin } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
-  const loginMutation = useLogin();
 
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    let validationResult = validatePassword(value);
-    setErrors((prev) => ({ ...prev, [name]: validationResult.message }));
   };
 
   const loginSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (errors.email || errors.password) {
-      setErrors((prev) => ({
-        ...prev,
-        general: '입력한 정보를 다시 확인해주세요.',
-      }));
+    if (!formData.email || !formData.password) {
+      alert('이메일과 비밀번호를 모두 입력해주세요.');
       return;
     }
-
+    if (errors.email || errors.password) {
+      alert('입력한 정보를 다시 확인해주세요.');
+      return;
+    }
     try {
-      const { token, refreshToken } = await loginMutation.mutateAsync(formData);
-      console.log('Login result:', { token, refreshToken });
-      authLogin(token, refreshToken);
-      navigate('/');
+      const response = await axios.post(
+        `/api/members/login`,
+        formData,
+        { withCredentials: true },
+      );
+
+      const token = response.headers['authorization'].split(' ')[1];
+      const refreshToken = response.headers['refresh-token'].split(' ')[1];
+
+      if (token && refreshToken) {
+        login(token, refreshToken);
+        navigate('/');
+      } else {
+        alert('로그인 실패: 잘못된 이메일 또는 비밀번호입니다.');
+      }
     } catch (error) {
-      console.error('Login error', error);
-      setErrors((prev) => ({
-        ...prev,
-        general: '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
-      }));
+      if (axios.isAxiosError(error)) {
+        console.error('로그인 오류', error.response?.data);
+        alert(`로그인 실패${error.response?.data?.message || error.message}`);
+      } else {
+        console.error('예상치 못한 오류:', error);
+        alert('로그인 중 예상치 못한 오류가 발생했습니다.');
+      }
     }
   };
 
@@ -72,11 +78,6 @@ const Login: React.FC = () => {
         </div>
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-4">로그인</h2>
-          {errors.general && (
-            <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4' role='alert'>
-              <span className='block sm:inline'>{errors.general}</span>
-              </div>
-          )}
           <form onSubmit={loginSubmit} className="space-y-4">
             <EmailInput
               email={formData.email}
@@ -92,9 +93,9 @@ const Login: React.FC = () => {
                 type="password"
                 name="password"
                 value={formData.password}
-                onChange={handlePasswordChange}
+                onChange={handleChange}
                 placeholder="비밀번호를 입력해주세요"
-                className={`w-full p-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded`}
+                className="w-full p-2 border border-gray-300 rounded"
               />
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">{errors.password}</p>
@@ -109,7 +110,7 @@ const Login: React.FC = () => {
               </button>
               <button
                 className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate('/partnersignup')}
                 type="button"
               >
                 회원가입
@@ -122,4 +123,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default PartnerLogin;

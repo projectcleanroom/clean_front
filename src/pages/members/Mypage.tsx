@@ -6,7 +6,7 @@ import React, {
   ChangeEvent,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
+import { useAuth } from '../../context/useAuth';
 import axios from 'axios';
 
 interface Member {
