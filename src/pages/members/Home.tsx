@@ -85,11 +85,6 @@ const Home: React.FC = () => {
             <button onClick={() => navigate('/signupselect')} className="text-white py-2 px-4 rounded-md m-2">회원가입</button>
         </nav>
         <p className="mb-4">고객 센터: 123-456-7890 | 이메일: <a href="mailto:support@cleanroom.com" className="text-white underline">support@cleanroom.com</a></p>
-        <div className="flex justify-center space-x-4">
-            <a href="#"><img src="facebook-icon.png" alt="Facebook" className="w-6 h-6" /></a>
-            <a href="#"><img src="instagram-icon.png" alt="Instagram" className="w-6 h-6" /></a>
-            <a href="#"><img src="twitter-icon.png" alt="Twitter" className="w-6 h-6" /></a>
-        </div>
     </footer>
     </div>
 );
