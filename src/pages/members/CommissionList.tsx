@@ -1,19 +1,13 @@
-// src/pages/CommissionList.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCommissions, useDeleteCommission } from '../../hooks/useCommissions';
+import {
+  useCommissions,
+  useDeleteCommission,
+} from '../../hooks/useCommissions';
 import { Commission } from '../../types/commission';
 
 const CommissionList: React.FC = () => {
-  const {
-    data: commissions,
-    isLoading,
-    error,
-  } = useCommissions() as {
-    data: Commission[] | undefined;
-    isLoading: boolean;
-    error: Error | null;
-  };
+  const { data: commissions, isLoading, error } = useCommissions();
   const deleteCommissionMutation = useDeleteCommission();
 
   const handleDeleteCommission = async (id: number) => {
@@ -27,20 +21,16 @@ const CommissionList: React.FC = () => {
     }
   };
 
-  if (commissions?.length === 0) return <p>의뢰 목록이 비어있습니다.</p>;
   if (isLoading) return <p>Loading...</p>;
-  if (error)
-    return (
-      <p>
-        Error: 의뢰 목록을 불러오는 데 실패했습니다. 나중에 다시 시도해 주세요.
-      </p>
-    );
+  if (error) return <p>Error: {(error as Error).message}</p>;
+  if (!commissions || commissions.length === 0)
+    return <p>의뢰 목록이 비어있습니다.</p>;
 
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-2xl font-bold mb-4">Commission List</h1>
       <ul className="space-y-4">
-        {commissions?.map((commission) => (
+        {commissions.map((commission: Commission) => (
           <li
             key={commission.commissionId}
             className="bg-white shadow rounded-lg p-4"
