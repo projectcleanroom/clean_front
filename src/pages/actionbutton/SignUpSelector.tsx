@@ -16,7 +16,7 @@ const SignUpSelector = () => {
           />
         </div>
         <div className="p-6 hidden sm:block">
-        <div className='flex justify-center items-center'><p>"로그인 유형을 선택해 주세요"</p></div>
+        <div className='flex justify-center items-center'><p>"회원가입 유형을 선택해 주세요"</p></div>
         <br/>
         <div className="flex justify-center items-center space-x-4">
               <button

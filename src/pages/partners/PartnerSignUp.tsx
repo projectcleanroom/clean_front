@@ -116,7 +116,7 @@ const PartnerSignUp: React.FC = () => {
           />
         </div>
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-4">회원가입</h2>
+          <h2 className="text-2xl font-bold mb-4">파트너 회원가입</h2>
           <form onSubmit={signUpSubmit} className="space-y-4">
             <EmailInput
               email={formData.email}

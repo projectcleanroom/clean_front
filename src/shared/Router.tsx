@@ -3,6 +3,12 @@ import { useAuth } from '../hooks/useAuth';
 
 import MemberLayout from '../components/members/MemberLayout';
 import PartnerLayout from '../components/partners/PartnerLayout';
+
+import Home from '../pages/exclude/Home';
+import ServicePage from '../pages/exclude/ServicePage';
+import LoginSelector from '../pages/actionbutton/LoginSelector';
+import SignUpSelector from '../pages/actionbutton/SignUpSelector';
+
 import Login from '../pages/members/Login';
 import SignUp from '../pages/members/SignUp';
 import CommissionWrite from '../pages/members/CommissionWrite';
@@ -11,18 +17,16 @@ import CommissionDetail from '../pages/members/CommissionDetail';
 import UserOrders from '../pages/members/UserOrders';
 import MemberInfo from '../pages/members/MemberInfo';
 import MemberEdit from '../pages/members/MemberEdit';
-import Home from '../pages/members/Home';
-import ServicePage from '../pages/members/ServicePage';
+
+import PartnerHome from '../pages/partners/PartnerHome';
 import PartnerLogin from '../pages/partners/PartnerLogin';
 import PartnerSignUp from '../pages/partners/PartnerSignUp';
-import LoginSelector from '../pages/actionbutton/LoginSelector';
-import SignUpSelector from '../pages/actionbutton/SignUpSelector';
-import PartnerRecruitment from '../pages/partners/PartnerRecruitment';
-import PartnerHome from '../pages/partners/PartnerHome';
+import PartnerRecruitment from '../pages/exclude/PartnerRecruitment';
 import CommissionCalling from '../pages/partners/CommissionCalling';
 import CommissionEsimate from '../pages/partners/CommissionEsimate';
 import CommissionMatching from '../pages/partners/CommissionMatching';
-
+import MemberHome from '../pages/members/MemberHome';
+import Layout from '../components/exclude/Layout';
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -37,30 +41,29 @@ const PublicOnlyRoute: React.FC = () => {
 const Router: React.FC = () => {
   return (
     <Routes>
-      <Route element={<MemberLayout />}>
+      {/* exclude 레이아웃 */}
+      <Route element={<Layout />}>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home />} />        
         <Route path="/service" element={<ServicePage />} />
         <Route path="/partnerrecruitment" element={<PartnerRecruitment />} />
         <Route path="/loginselect" element={<LoginSelector />} />
-        <Route path="/signupselect" element={<SignUpSelector />} />
+        <Route path="/signupselect" element={<SignUpSelector />} />        
 
         {/* Public Only Routes (for non-authenticated users) */}
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-        </Route>
+        <Route path="/partnerlogin" element={<PartnerLogin />} />
+        <Route path="/partnersignup" element={<PartnerSignUp />} />
+        </Route>        
+      </Route>
 
+      {/* 멤버 레이아웃 */}
+      <Route element={<MemberLayout />}>
         {/* Protected Routes (for authenticated users) */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/commissionwrite" element={<CommissionWrite />} />
-          <Route path="/commissionlist" element={<CommissionList />} />
-          <Route path="/commissiondetail/:id" element={<CommissionDetail />} />
-          <Route path="/userorders" element={<UserOrders />} />
-        </Route>
-
-        {/* Protected Routes (for authenticated users) */}
-        <Route element={<ProtectedRoute />}>
+          <Route path="/memberhome" element={<MemberHome />} />          
           <Route path="/member/:email" element={<MemberInfo />} />
           <Route path="/member/:email/edit" element={<MemberEdit />} />
           <Route path="/commissionwrite" element={<CommissionWrite />} />
@@ -69,25 +72,19 @@ const Router: React.FC = () => {
           <Route path="/userorders" element={<UserOrders />} />
         </Route>
       </Route>
-      <Route element={<PartnerLayout />}>
-        {/* Public Routes */}
-        <Route path="/partnerhome" element={<PartnerHome />} />
-        <Route path="/partnerrecruitment" element={<PartnerRecruitment />} />
-        <Route path="/commissioncalling" element={<CommissionCalling />} />
-        <Route path="/commissionestimate" element={<CommissionEsimate />} />
-        <Route path="/commissionmatching" element={<CommissionMatching />} />
 
+      {/* 파트너 레이아웃 */}
+      <Route element={<PartnerLayout />}>        
+          <Route path="/partnerhome" element={<PartnerHome />} />
+          <Route path="/commissioncalling" element={<CommissionCalling />} />
+          <Route path="/commissionestimate" element={<CommissionEsimate />} />
+          <Route path="/commissionmatching" element={<CommissionMatching />} />
         {/* Public Only Routes (for non-authenticated users) */}
         <Route element={<PublicOnlyRoute />}>
-          <Route path="/partnerlogin" element={<PartnerLogin />} />
-          <Route path="/partnersignup" element={<PartnerSignUp />} />
         </Route>
 
         {/* Protected Routes (for authenticated users) */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/member/:email" element={<MemberInfo />} />
-          <Route path="/member/:email/edit" element={<MemberEdit />} />
-          <Route path="/userorders" element={<UserOrders />} />
         </Route>
       </Route>
     </Routes>

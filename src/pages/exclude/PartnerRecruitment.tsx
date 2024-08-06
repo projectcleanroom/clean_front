@@ -1,25 +1,36 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/logo.png'
+
 
 const PartnerRecruitment: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container mx-auto max-w-screen-xl">
+    <div className="container mx-auto max-w-screen-xl mt-12">
+              <div className="p-6 hidden sm:block">
+                <img
+            src={logo}
+            alt="깔끔한방 로고"
+            className="w-full h-auto max-h-[300px] object-contain"
+          />
+        </div>
       {/* 히어로 섹션 */}
       <section className="text-center my-12">
         <h1 className="text-4xl font-bold">깔끔한 방과 함께 성장하세요!</h1>
         <p className="text-lg text-gray-600 mt-4">우리와 함께 청소 서비스를 제공할 파트너를 모집합니다.</p>
         <div className="mt-6">
           <button className="bg-[#0bb8f9] text-white py-2 px-4 rounded-md m-2" onClick={() => navigate('/partnersignup')}>지금 사업자 등록하러 가기</button>
-          <button className="bg-[#0bb8f9] text-white py-2 px-4 rounded-md m-2" onClick={() => navigate('/partnerhome')}>파트너 공간에서 더 자세히 알아보기</button>
         </div>
       </section>
 
       {/* 파트너 혜택 섹션 */}
-      <section className="text-center my-12 bg-gray-100 p-8">
+      <section className="text-center my-12">
+      <div className='bg-gray-100 p-8 rounded-3xl'>
+        
         <h2 className="text-3xl font-bold">파트너가 되는 이유</h2>
         <p className="text-lg text-gray-600 mt-4">깔끔한 방 파트너만의 특별한 혜택</p>
+        </div>
         <ul className="list-disc list-inside mt-4 text-left max-w-md mx-auto">
           <li className="mb-2">더 많은 고객 확보: 다양한 고객이 청소 서비스를 의뢰하여 더 많은 비즈니스 기회를 얻으세요.</li>
           <li className="mb-2">안정적인 수익: 정기적인 청소 요청을 통해 안정적인 수익을 창출하세요.</li>
@@ -30,8 +41,8 @@ const PartnerRecruitment: React.FC = () => {
 
       {/* 파트너 모집 절차 */}
       <section className="my-12">
-        <div className="bg-gray-100 p-8">
-          <h2 className="text-3xl font-bold text-center">파트너 가입 절차</h2>
+      <div className='bg-gray-100 p-8 rounded-3xl'>
+      <h2 className="text-3xl font-bold text-center">파트너 가입 절차</h2>
           <p className="text-lg text-gray-600 mt-4 text-center">간단한 절차로 깔끔한 방의 파트너가 되세요</p>
         </div>
         <ul className="list-decimal list-inside mt-4 text-left max-w-md mx-auto">
@@ -45,8 +56,8 @@ const PartnerRecruitment: React.FC = () => {
 
       {/* 성공 사례 섹션 */}
       <section className="my-12">
-        <div className="bg-gray-100 p-8">
-          <h2 className="text-3xl font-bold text-center">파트너 성공 사례</h2>
+      <div className='bg-gray-100 p-8 rounded-3xl'>
+      <h2 className="text-3xl font-bold text-center">파트너 성공 사례</h2>
           <p className="text-lg text-gray-600 mt-4 text-center">깔끔한 방과 함께 성공한 파트너들의 이야기</p>
         </div>
         <div className="space-y-4 max-w-md mx-auto mt-8">
@@ -64,8 +75,8 @@ const PartnerRecruitment: React.FC = () => {
 
       {/* FAQ 섹션 */}
       <section className="my-12">
-        <div className="bg-gray-100 p-8">          
-          <h2 className="text-3xl font-bold text-center">자주 묻는 질문</h2>
+      <div className='bg-gray-100 p-8 rounded-3xl'>
+      <h2 className="text-3xl font-bold text-center">자주 묻는 질문</h2>
           <p className="text-lg text-gray-600 mt-4 text-center">파트너 가입과 관련된 궁금한 점을 확인하세요.</p>
         </div>
         <div className="space-y-4 max-w-md mx-auto mt-8">
@@ -90,8 +101,8 @@ const PartnerRecruitment: React.FC = () => {
 
       {/* CTA 섹션 */}
       <section className="text-center my-12">
-        <div className="bg-gray-100 p-8">
-          <h2 className="text-3xl font-bold">지금 바로 파트너로 가입하세요!</h2>
+      <div className='bg-gray-100 p-8 rounded-3xl'>
+      <h2 className="text-3xl font-bold">지금 바로 파트너로 가입하세요!</h2>
           <p className="text-lg text-gray-600 mt-4">깔끔한 방과 함께 더 많은 고객에게 다가가세요.</p>
         </div>
         <br/>

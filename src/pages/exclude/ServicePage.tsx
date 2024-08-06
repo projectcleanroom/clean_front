@@ -3,16 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import gavageRoom from "../../assets/gavageRoom.png"
 import cleanExpress from "../../assets/cleanExpress.png"
 import cleanLiving from "../../assets/cleanLiving.png"
+import logo from '../../assets/logo.png'
 
 const ServicePage: React.FC = () => {
   const navigate = useNavigate()
   
   return (
-    <div className="container mx-auto max-w-screen-xl">
+    <div className="container mx-auto max-w-screen-xl mt-12">
+        <div className="p-6 hidden sm:block">
+                <img
+            src={logo}
+            alt="깔끔한방 로고"
+            className="w-full h-auto max-h-[300px] object-contain"
+          />
+        </div>
       {/* 서비스 소개 섹션 */}
-      <section className="text-center mb-12 bg-gray-100 p-8">
+      <section className="my-12 text-center">
+      <div className='bg-gray-100 p-8 rounded-3xl'>          
         <h1 className="text-4xl font-bold">우리의 청소 서비스</h1>
         <p className="text-lg text-gray-600 mt-4">깔끔한 방이 제공하는 다양한 청소 서비스를 알아보세요.</p>
+        </div>
         <div className="mt-6">
           <button className="bg-[#0bb8f9] text-white py-2 px-4 rounded-md m-2" onClick={() => navigate('/signup')}>지금 회원가입 하기</button>
         </div>
@@ -27,7 +37,7 @@ const ServicePage: React.FC = () => {
             className="w-full h-auto max-h-[250px] object-contain"
           />
           <div className='w-full h-auto max-h-[250px]'>
-          <h2 className="text-3xl font-bold">특수청소</h2>
+          <h2 className="text-4xl font-bold">특수청소</h2>
           <p className="text-lg text-gray-600 mt-2">특수청소는 일명 '쓰레기 집'으로 불리는,<br/>  누적량이 많은 청소를 말합니다.<br/> 전문가가 쌓여 있는 걱정을 해결해드리고,<br/>안전하고 깨끗한 환경을 만들어 드립니다.</p>
           <ul className="list-disc list-inside mt-4 text-left">
             <li>누적된 쓰레기 및 오염물 제거</li>
@@ -43,7 +53,7 @@ const ServicePage: React.FC = () => {
             className="w-full h-auto max-h-[250px] object-contain"
           />
           <div className='w-full h-auto max-h-[250px]'>
-          <h2 className="text-3xl font-bold">일반청소</h2>
+          <h2 className="text-4xl font-bold">일반청소</h2>
           <p className="text-lg text-gray-600 mt-2">일반청소는 가정에서 일상적으로 필요한<br/>  청소 서비스를 제공합니다.<br/> 매일 깨끗한 집을 유지할 수 있도록 도와드립니다.</p>
           <ul className="list-disc list-inside mt-4 text-left">
             <li>주방, 화장실, 거실 등 일반 공간 청소</li>
@@ -59,7 +69,7 @@ const ServicePage: React.FC = () => {
             className="w-full h-auto max-h-[250px] object-contain"
           />
           <div className='w-full h-auto max-h-[250px]'>
-          <h2 className="text-3xl font-bold">입주청소</h2>
+          <h2 className="text-4xl font-bold">입주청소</h2>
           <p className="text-lg text-gray-600 mt-2">입주청소는 이사 전, 새로운 집으로<br/> 들어가기 전에 필요한 청소를 말합니다.<br/> 완벽한 첫날을 위해 깨끗한 공간을 준비해드립니다.</p>
           <ul className="list-disc list-inside mt-4 text-left">
             <li>빈 집 청소 및 새 집 준비</li>
@@ -72,11 +82,11 @@ const ServicePage: React.FC = () => {
 
       {/* 서비스 이용 절차 */}
       <section className="mb-12">
-      <div className='bg-gray-100 p-8'>
-        <h2 className="text-3xl font-bold text-center">서비스 이용 절차</h2>
+      <div className='bg-gray-100 p-8 rounded-3xl'>
+        <h2 className="text-4xl font-bold text-center">서비스 이용 절차</h2>
         <p className="text-lg text-gray-600 mt-4 text-center">깔끔한 방의 청소 서비스를 이용하는 간단한 절차</p>
       </div>
-        <ul className="list-decimal list-inside mt-4 text-left max-w-md mx-auto">
+        <ul className="list-decimal list-inside mt-6 text-left max-w-md mx-auto">
           <li className="mb-2">서비스 요청: 청소가 필요한 공간과 요구사항을 입력하여 서비스 요청을 올립니다.</li>
           <li className="mb-2">견적 비교: 여러 청소 업체에서 제안한 견적을 비교하고, 고객이 원하는 서비스를 선택합니다.</li>
           <li className="mb-2">예약 확정: 선택한 청소 업체와 예약을 확정합니다.</li>
@@ -87,11 +97,11 @@ const ServicePage: React.FC = () => {
 
       {/* 고객 혜택 */}
       <section className="mb-12">
-      <div className='bg-gray-100 p-8'>
-        <h2 className="text-3xl font-bold text-center">왜 깔끔한 방인가요?</h2>
+      <div className='bg-gray-100 p-8 rounded-3xl'>
+        <h2 className="text-4xl font-bold text-center">왜 깔끔한 방인가요?</h2>
         <p className="text-lg text-gray-600 mt-4 text-center">고객이 우리 서비스를 선택하는 이유</p>
       </div>
-        <ul className="list-disc list-inside mt-4 text-left max-w-md mx-auto">
+        <ul className="list-disc list-inside mt-6 text-left max-w-md mx-auto">
           <li className="mb-2">다양한 견적 비교: 여러 청소 업체의 견적을 한눈에 비교할 수 있습니다.</li>
           <li className="mb-2">맞춤형 청소 계획: 각 가정의 필요에 맞춘 청소 계획을 제공합니다.</li>
           <li className="mb-2">시간 절약: 청소는 깔끔한 방이, 고객은 중요한 일에 집중할 수 있습니다.</li>
@@ -101,11 +111,11 @@ const ServicePage: React.FC = () => {
 
       {/* 고객 후기 */}
       <section className="mb-12">
-        <div className='bg-gray-100 p-8'>
-        <h2 className="text-3xl font-bold text-center">실제 고객 후기</h2>
+        <div className='bg-gray-100 p-8 rounded-3xl'>
+        <h2 className="text-4xl font-bold text-center">실제 고객 후기</h2>
         <p className="text-lg text-gray-600 mt-4 text-center">우리 서비스를 이용한 고객들의 생생한 후기</p>
         </div>
-        <div className="space-y-4 max-w-md mx-auto mt-8">
+        <div className="space-y-4 max-w-md mx-auto mt-6">
           <div className="p-4 border rounded-lg shadow-md">
             <p className="text-gray-600">"특수청소 덕분에 오랜 걱정거리가 사라졌습니다. 감사합니다!" - 박민수</p>
           </div>
@@ -120,8 +130,8 @@ const ServicePage: React.FC = () => {
 
       {/* FAQ 섹션 */}
       <section className="mb-12">
-        <div className='bg-gray-100 p-8'>          
-        <h2 className="text-3xl font-bold text-center">자주 묻는 질문</h2>
+        <div className='bg-gray-100 p-8 rounded-3xl'>          
+        <h2 className="text-4xl font-bold text-center">자주 묻는 질문</h2>
         <p className="text-lg text-gray-600 mt-4 text-center">고객님들이 자주 묻는 질문과 답변을 확인하세요.</p>
         </div>
         <div className="space-y-4 max-w-md mx-auto mt-8">
@@ -146,8 +156,8 @@ const ServicePage: React.FC = () => {
 
       {/* CTA 섹션 */}
       <section className="text-center mb-12">
-        <div className='bg-gray-100 p-8'>
-        <h2 className="text-3xl font-bold">지금 바로 견적을 받아보세요!</h2>
+        <div className='bg-gray-100 p-8 rounded-3xl'>
+        <h2 className="text-4xl font-bold">지금 바로 견적을 받아보세요!</h2>
         <p className="text-lg text-gray-600 mt-4">청결한 생활을 시작하는 가장 간단한 방법</p>
         </div>
         <br/>
