@@ -15,7 +15,7 @@ interface FormErrors {
   password: string;
 }
 
-const PartnerLogin: React.FC = () => {
+const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginForm>({
     email: '',
     password: '',
@@ -123,4 +123,4 @@ const PartnerLogin: React.FC = () => {
   );
 };
 
-export default PartnerLogin;
+export default Login;

@@ -48,7 +48,6 @@ const Login: React.FC = () => {
 
     try {
       const { token, refreshToken } = await loginMutation.mutateAsync(formData);
-      console.log('Login result:', { token, refreshToken });
       authLogin(token, refreshToken);
       navigate('/memberhome');
     } catch (error) {

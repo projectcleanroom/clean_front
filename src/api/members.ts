@@ -24,9 +24,11 @@ export const deleteMember = async (email: string): Promise<void> => {
   await api.delete(`/members/${email}`);
 };
 
-export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+export const login = async (
+  credentials: LoginCredentials,
+): Promise<LoginResponse> => {
   const response = await api.post('/members/login', credentials);
-  
+
   const token = response.headers['authorization'];
   const refreshToken = response.headers['refresh-token'];
 
@@ -36,11 +38,13 @@ export const login = async (credentials: LoginCredentials): Promise<LoginRespons
 
   return {
     token: token.replace('Bearer ', ''),
-    refreshToken: refreshToken.replace('Bearer ', '')
+    refreshToken: refreshToken.replace('Bearer ', ''),
   };
 };
 
-export const signup = async (member: Omit<Member, 'id'> & { password: string }): Promise<Member> => {
+export const signup = async (
+  member: Omit<Member, 'id'> & { password: string },
+): Promise<Member> => {
   try {
     console.log('Sending signup request with data:', member); // 요청 데이터 로깅
     const response = await api.post<Member>('/members/signup', member);
