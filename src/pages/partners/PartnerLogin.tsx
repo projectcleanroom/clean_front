@@ -51,7 +51,7 @@ const PartnerLogin: React.FC = () => {
 
       if (token && refreshToken) {
         login(token, refreshToken);
-        navigate('/');
+        navigate('/partnerhome');
       } else {
         alert('로그인 실패: 잘못된 이메일 또는 비밀번호입니다.');
       }
@@ -77,7 +77,7 @@ const PartnerLogin: React.FC = () => {
           />
         </div>
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-4">로그인</h2>
+          <h2 className="text-2xl font-bold mb-4">파트너 로그인</h2>
           <form onSubmit={loginSubmit} className="space-y-4">
             <EmailInput
               email={formData.email}

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import icon from '../../assets/icon.png'
 
-const MemberHeader: React.FC = () => {
+const Header: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -20,21 +20,18 @@ const MemberHeader: React.FC = () => {
             src={icon}
             alt="Home"
             className="h-12 cursor-pointer"
-            onClick={() => navigate('/memberhome')}
+            onClick={() => navigate('/')}
           />
         </div>
         <div className="flex space-x-4 text-2xl">
-          <button className="h-btn" onClick={() => navigate('/memberhome')}>
+        <button className="h-btn" onClick={() => navigate('/')}>
             홈
           </button>
-          <button className="h-btn" onClick={() => navigate('/commissionwrite')}>
-            의뢰작성하기
+          <button className="h-btn" onClick={() => navigate('/service')}>
+            서비스 알아보기
           </button>
-          <button className="h-btn" onClick={() => navigate('/commissionlist')}>
-            의뢰목록
-          </button>
-          <button className="h-btn" onClick={() => navigate('/userorders')}>
-            견적확인하기
+          <button className="h-btn" onClick={() => navigate('/partnerrecruitment')}>
+            파트너를 모집해요
           </button>
         </div>
 
@@ -69,4 +66,4 @@ const MemberHeader: React.FC = () => {
   );
 };
 
-export default MemberHeader;
+export default Header;
