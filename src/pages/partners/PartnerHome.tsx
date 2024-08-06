@@ -1,23 +1,35 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import logo from '../../assets/logo.png'
 
 const PartnerHome: React.FC = () => {
 
   const navigate = useNavigate();
 
   return (
-    <div className="container mx-auto max-w-screen-xl">
+    <div className="container mx-auto max-w-screen-xl mt-12">
+              <div className="p-6 hidden sm:block">
+          <img
+            src={logo}
+            alt="깔끔한방 로고"
+            className="w-full h-auto max-h-[300px] object-contain"
+          />
+        </div>
       {/* 환영 메시지 섹션 */}
-      <section className="text-center mb-12 bg-gray-100 p-8">
+      <section className="my-12 text-center">
+        <div className='bg-gray-100 p-8 rounded-3xl'>
         <h1 className="text-4xl font-bold">파트너 페이지에 오신 전문가님을 환영합니다!</h1>
         <p className="text-lg text-gray-600 mt-4">깔끔한 방과 함께 성장하는 여정을 시작하세요.</p>
+        </div>
       </section>
 
       {/* 주요 기능 및 메뉴 */}
-      <section className="mb-12 p-8 text-center">
-        <h2 className="text-3xl font-bold">주요 기능</h2>
-        <ul className="list-disc list-inside mt-4 text-left max-w-md mx-auto">
+      <section className="mb-12">
+      <div className='bg-gray-100 p-8 rounded-3xl text-center'>
+      <h2 className="text-4xl font-bold">주요 기능</h2>
+        <p className="text-lg text-gray-600 mt-4">파트너님의 전문성을 펼쳐주세요.</p>
+      </div>
+        <ul className="list-disc list-inside mt-6 text-left max-w-md mx-auto">
           <li className="mb-2">새 의뢰 보기: 고객의 새로운 청소 의뢰를 확인하고, 견적을 제안하세요.</li>
           <li className="mb-2">진행 중인 의뢰: 현재 진행 중인 청소 의뢰를 관리하세요.</li>
           <li className="mb-2">완료된 의뢰: 완료된 청소 의뢰 내역을 확인하고, 고객의 피드백을 확인하세요.</li>
@@ -29,9 +41,11 @@ const PartnerHome: React.FC = () => {
 
       {/* 새 의뢰 섹션 */}
       <section className="mb-12">
-        <h2 className="text-3xl font-bold text-center">새로운 청소 의뢰</h2>
-        <p className="text-lg text-gray-600 mt-4 text-center">고객이 올린 새로운 청소 의뢰를 확인하고, 견적을 제안하세요.</p>
-        <ul className="list-disc list-inside mt-4 text-left max-w-md mx-auto">
+      <div className='bg-gray-100 p-8 rounded-3xl text-center'>
+        <h2 className="text-4xl font-bold">새로운 청소 의뢰</h2>
+        <p className="text-lg text-gray-600 mt-4">고객이 올린 새로운 청소 의뢰를 확인하고, 견적을 제안하세요.</p>
+      </div>
+        <ul className="list-disc list-inside mt-6 text-left max-w-md mx-auto">
           <li className="mb-2">의뢰 1: 의뢰 내용 요약, 고객 이름, 날짜</li>
           <li className="mb-2">의뢰 2: 의뢰 내용 요약, 고객 이름, 날짜</li>
         </ul>
@@ -42,9 +56,11 @@ const PartnerHome: React.FC = () => {
 
       {/* 일정 관리 섹션 */}
       <section className="mb-12">
-        <h2 className="text-3xl font-bold text-center">일정 관리</h2>
-        <p className="text-lg text-gray-600 mt-4 text-center">오늘의 일정과 향후 일정을 확인하세요.</p>
-        <div className="max-w-md mx-auto mt-4">
+      <div className='bg-gray-100 p-8 rounded-3xl text-center'>
+        <h2 className="text-4xl font-bold">일정 관리</h2>
+        <p className="text-lg text-gray-600 mt-4">오늘의 일정과 향후 일정을 확인하세요.</p>
+      </div>
+        <div className="max-w-md mx-auto mt-6">
           <h3 className="text-xl font-bold">오늘의 일정:</h3>
           <ul className="list-disc list-inside mt-2">
             <li className="mb-2">일정 1: 고객 이름, 시간, 장소</li>
@@ -63,9 +79,11 @@ const PartnerHome: React.FC = () => {
 
       {/* 고객 피드백 섹션 */}
       <section className="mb-12">
-        <h2 className="text-3xl font-bold text-center">고객 피드백</h2>
+      <div className='bg-gray-100 p-8 rounded-3xl text-center'>
+        <h2 className="text-4xl font-bold text-center">고객 피드백</h2>
         <p className="text-lg text-gray-600 mt-4 text-center">고객들이 남긴 피드백을 확인하고, 서비스를 개선하세요.</p>
-        <div className="space-y-4 max-w-md mx-auto mt-8">
+      </div>
+        <div className="space-y-4 max-w-md mx-auto mt-6">
           <div className="p-4 border rounded-lg shadow-md">
             <p className="text-gray-600">"고객 이름, 별점, 피드백 내용"</p>
           </div>
@@ -80,9 +98,11 @@ const PartnerHome: React.FC = () => {
 
       {/* 통계 및 리포트 섹션 */}
       <section className="mb-12">
-        <h2 className="text-3xl font-bold text-center">통계 및 리포트</h2>
-        <p className="text-lg text-gray-600 mt-4 text-center">월별 수익, 작업 내역 등의 통계 정보를 확인하세요.</p>
-        <div className="max-w-md mx-auto mt-4">
+      <div className='bg-gray-100 p-8 rounded-3xl text-center'>
+      <h2 className="text-4xl font-bold">통계 및 리포트</h2>
+        <p className="text-lg text-gray-600 mt-4">월별 수익, 작업 내역 등의 통계 정보를 확인하세요.</p>
+        </div>
+        <div className="max-w-md mx-auto mt-6">
           <p className="mb-2">이번 달 수익: <strong>₩1,200,000</strong></p>
           <p className="mb-2">총 의뢰 수: <strong>25건</strong></p>
           <p className="mb-2">고객 만족도: <strong>4.8/5</strong></p>
@@ -95,8 +115,7 @@ const PartnerHome: React.FC = () => {
         <button onClick={() => navigate('/partnerhome')} className="text-white py-2 px-4 rounded-md m-2">파트너 홈</button>
         <button onClick={() => navigate('/commissioncalling')} className="text-white py-2 px-4 rounded-md m-2">회원 새 의뢰 보기</button>
         <button onClick={() => navigate('/commissionestimate')} className="text-white py-2 px-4 rounded-md m-2">견적 목록</button>
-        <button onClick={() => navigate('/commissionmatching')} className="text-white py-2 px-4 rounded-md m-2">견적매칭 확인하기</button>
-        <button onClick={() => navigate('/')} className="text-white py-2 px-4 rounded-md m-2">고객 홈으로 돌아가기</button>
+        <button onClick={() => navigate('/commissionmatching')} className="text-white py-2 px-4 rounded-md m-2">견적매칭 확인하기</button>        
           </nav>
         <p className="mb-4">고객 센터: 123-456-7890 | 이메일: <a href="mailto:support@cleanroom.com" className="text-white underline">support@cleanroom.com</a></p>
       </footer>
