@@ -13,6 +13,9 @@ const ServicePage: React.FC = () => {
       <section className="text-center mb-12 bg-gray-100 p-8">
         <h1 className="text-4xl font-bold">우리의 청소 서비스</h1>
         <p className="text-lg text-gray-600 mt-4">깔끔한 방이 제공하는 다양한 청소 서비스를 알아보세요.</p>
+        <div className="mt-6">
+          <button className="bg-[#0bb8f9] text-white py-2 px-4 rounded-md m-2" onClick={() => navigate('/signup')}>지금 회원가입 하기</button>
+        </div>
       </section>
 
       {/* 서비스 종류 및 설명 */}
@@ -152,7 +155,7 @@ const ServicePage: React.FC = () => {
         
       </section>
 
-      <footer className="bg-[#144156] text-white p-4 text-center">
+      <footer className="bg-[#226b8d] text-white p-4 text-center">
         <nav className="mb-4">
             <a href="#" className="text-white mx-2">홈</a>
             <button onClick={() => navigate('/commissionwrite')} className="text-white py-2 px-4 rounded-md m-2">의뢰작성하기</button>

@@ -1,10 +1,10 @@
-import Header from './Header';
+import MemberHeader from './MemberHeader';
 import { Outlet } from 'react-router-dom';
 
-const Layout: React.FC = () => {
+const MemberLayout: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      <MemberHeader />
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8">
         <Outlet />
       </main>
@@ -12,4 +12,4 @@ const Layout: React.FC = () => {
   );
 };
 
-export default Layout;
+export default MemberLayout;

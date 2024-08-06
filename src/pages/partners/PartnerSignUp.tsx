@@ -112,7 +112,7 @@ const PartnerSignUp: React.FC = () => {
           <img
             src={logo}
             alt="깔끔한방 로고"
-            className="w-full h-auto max-h-[400px] object-contain"
+            className="w-full h-auto max-h-[300px] object-contain"
           />
         </div>
         <div className="p-6">
@@ -148,13 +148,13 @@ const PartnerSignUp: React.FC = () => {
             ))}
             <div className="flex justify-center space-x-4">
               <button
-                className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
+                className="bg-[#144156] text-white py-2 px-4 rounded"
                 type="submit"
               >
                 회원가입하기
               </button>
               <button
-                className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
+                className="bg-[#144156] text-white py-2 px-4 rounded"
                 onClick={() => navigate(`/partnerlogin`)}
                 type="button"
               >
