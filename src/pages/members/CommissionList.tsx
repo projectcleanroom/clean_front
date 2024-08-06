@@ -1,8 +1,8 @@
 // src/pages/CommissionList.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCommissions, useDeleteCommission } from '../hooks/useCommissions';
-import { Commission } from '../types/commission';
+import { useCommissions, useDeleteCommission } from '../../hooks/useCommissions';
+import { Commission } from '../../types/commission';
 
 const CommissionList: React.FC = () => {
   const {

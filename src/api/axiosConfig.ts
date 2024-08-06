@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: '/api',
-  withCredentials: true,
 });
 
 api.interceptors.request.use(
@@ -25,12 +24,10 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('refreshToken');
         const res = await axios.post('/api/refresh', { refreshToken });
-        const newToken = res.headers['authorization']?.replace('Bearer ', '');
-        if (newToken) {
-          localStorage.setItem('token', newToken);
-          api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-          return api(originalRequest);
-        }
+        const { token } = res.data;
+        localStorage.setItem('token', token);
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        return api(originalRequest);
       } catch (refreshError) {
         throw refreshError;
       }

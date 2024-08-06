@@ -1,14 +1,13 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
-import axios, { AxiosInstance } from 'axios';
-import { Member } from '../types/member';
 import api from '../api/axiosConfig';
+import { Member } from '../types/member';
 
 export interface AuthContextType {
   isAuthenticated: boolean;
   member: Member | null;
   login: (token: string, refreshToken: string) => void;
   logout: () => void;
-  authAxios: AxiosInstance;
+  fetchProfile: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -22,58 +21,46 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [member, setMember] = useState<Member | null>(null);
-  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
-      setToken(storedToken);
       setIsAuthenticated(true);
-      fetchMember(storedToken);
     }
   }, []);
 
-  const fetchMember = async (authToken: string) => {
+  const fetchProfile = async () => {
     try {
-      const response = await api.get<Member>('/api/members/me', {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      const response = await api.get<Member>('/members/profile');
       setMember(response.data);
     } catch (error) {
-      console.error('Failed to fetch member data:', error);
+      console.error('Failed to fetch profile data:', error);
+      // 에러 처리 (예: 토큰이 유효하지 않은 경우 로그아웃)
+      logout();
     }
   };
 
-  const login = (newToken: string, newRefreshToken: string) => {
-    console.log('Received tokens:', newToken, newRefreshToken);
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('refreshToken', newRefreshToken);
-    setToken(newToken);
+  const login = (token: string, refreshToken: string) => {
+    console.log('Received tokens:', token, refreshToken);
+    localStorage.setItem('token', token);
+    localStorage.setItem('refreshToken', refreshToken);
     setIsAuthenticated(true);
-    fetchMember(newToken);
+    // 프로필 정보를 즉시 가져오지 않고, 필요할 때 fetchProfile을 호출하도록 변경
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
-    setToken(null);
     setIsAuthenticated(false);
     setMember(null);
   };
-
-  const authAxios = axios.create({
-    baseURL: '/api',
-    headers: {
-      Authorization: token ? `Bearer ${token}` : undefined,
-    },
-  });
 
   const contextValue: AuthContextType = {
     isAuthenticated,
     member,
     login,
     logout,
-    authAxios,
+    fetchProfile,
   };
 
   return (

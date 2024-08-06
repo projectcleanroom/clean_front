@@ -9,7 +9,7 @@ export const fetchMembers = async (): Promise<Member[]> => {
 };
 
 export const fetchCurrentMember = async (): Promise<Member> => {
-  const response = await api.get<Member>('/members/me');
+  const response = await api.get<Member>('/members/profile');
   return response.data;
 };
 
@@ -25,7 +25,7 @@ export const deleteMember = async (email: string): Promise<void> => {
 };
 
 export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-  const response = await api.post('/api/members/login', credentials);
+  const response = await api.post('/members/login', credentials);
   
   const token = response.headers['authorization'];
   const refreshToken = response.headers['refresh-token'];
@@ -40,11 +40,16 @@ export const login = async (credentials: LoginCredentials): Promise<LoginRespons
   };
 };
 
-export const signup = async (
-  member: Omit<Member, 'id'> & { password: string },
-): Promise<Member> => {
-  const response = await api.post<Member>('/members/signup', member);
-  return response.data;
+export const signup = async (member: Omit<Member, 'id'> & { password: string }): Promise<Member> => {
+  try {
+    console.log('Sending signup request with data:', member); // 요청 데이터 로깅
+    const response = await api.post<Member>('/members/signup', member);
+    console.log('Signup response:', response.data); // 응답 데이터 로깅
+    return response.data;
+  } catch (error) {
+    console.error('Signup error:', error); // 에러 로깅
+    throw error;
+  }
 };
 
 export const fetchCommission = async (id: number): Promise<Commission> => {
