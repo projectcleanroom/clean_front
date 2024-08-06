@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import icon from '../../assets/icon.png'
 
 const MemberHeader: React.FC = () => {
@@ -46,7 +46,7 @@ const MemberHeader: React.FC = () => {
             <>
               <button
                 className="h-btn"
-                onClick={() => navigate('/mypage/:email')}
+                onClick={() => navigate('/member/:email')}
               >
                 마이 페이지
               </button>

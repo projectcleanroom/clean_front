@@ -1,9 +1,8 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
+import { useAuth } from '../hooks/useAuth';
 
 import MemberLayout from '../components/members/MemberLayout';
 import PartnerLayout from '../components/partners/PartnerLayout';
-
 import Login from '../pages/members/Login';
 import SignUp from '../pages/members/SignUp';
 import CommissionWrite from '../pages/members/CommissionWrite';
@@ -50,6 +49,14 @@ const Router: React.FC = () => {
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+        </Route>
+
+        {/* Protected Routes (for authenticated users) */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/commissionwrite" element={<CommissionWrite />} />
+          <Route path="/commissionlist" element={<CommissionList />} />
+          <Route path="/commissiondetail/:id" element={<CommissionDetail />} />
+          <Route path="/userorders" element={<UserOrders />} />
         </Route>
 
         {/* Protected Routes (for authenticated users) */}
