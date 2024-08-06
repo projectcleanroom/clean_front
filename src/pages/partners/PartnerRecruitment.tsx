@@ -109,11 +109,6 @@ const PartnerRecruitment: React.FC = () => {
           <a href="/login" className="text-white mx-2">로그인/회원가입</a>
         </nav>
         <p className="mb-4">고객 센터: 123-456-7890 | 이메일: <a href="mailto:support@cleanroom.com" className="text-white underline">support@cleanroom.com</a></p>
-        <div className="flex justify-center space-x-4">
-          <a href="#"><img src="facebook-icon.png" alt="Facebook" className="w-6 h-6" /></a>
-          <a href="#"><img src="instagram-icon.png" alt="Instagram" className="w-6 h-6" /></a>
-          <a href="#"><img src="twitter-icon.png" alt="Twitter" className="w-6 h-6" /></a>
-        </div>
       </footer>
     </div>
   );
