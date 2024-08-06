@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { validateEmail } from '../utils/validationUtils';
+import { validateEmail } from '../../utils/validationUtils';
 
 interface EmailInputProps {
   email: string;

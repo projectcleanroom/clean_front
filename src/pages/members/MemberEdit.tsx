@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useCurrentMember, useUpdateMember } from '../hooks/useMembers';
+import { useCurrentMember, useUpdateMember } from '../../hooks/useMembers';
 import {
   validateNickName,
   validatePhoneNumber,
-} from '../utils/validationUtils';
+} from '../../utils/validationUtils';
 import { FormEvent, useState } from 'react';
 
 interface FormErrors {

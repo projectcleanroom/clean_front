@@ -2,7 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth';
 import icon from '../../assets/icon.png'
-const Header: React.FC = () => {
+
+const MemberHeader: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -35,6 +36,9 @@ const Header: React.FC = () => {
           <button className="h-btn" onClick={() => navigate('/userorders')}>
             견적확인하기
           </button>
+          <button className="h-btn" onClick={() => navigate('/partnerrecruitment')}>
+            파트너를 모집해요
+          </button>
         </div>
 
         <div className="flex items-center">
@@ -53,12 +57,12 @@ const Header: React.FC = () => {
             </>
           ) : (
             <>
-              <button className="h-btn text-2xl" onClick={() => navigate('/login')}>
-                회원 로그인
+              <button className="h-btn text-2xl" onClick={() => navigate('/loginselect')}>
+                로그인
               </button>
               <div className="w-px h-6 bg-white mx-2"></div>
-              <button className="h-btn text-2xl" onClick={() => navigate('/partnerLogin')}>
-                파트너 로그인
+              <button className="h-btn text-2xl" onClick={() => navigate('/signupselect')}>
+                회원가입
               </button>
             </>
           )}
@@ -68,4 +72,4 @@ const Header: React.FC = () => {
   );
 };
 
-export default Header;
+export default MemberHeader;

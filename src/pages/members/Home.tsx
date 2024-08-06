@@ -14,6 +14,7 @@ const Home: React.FC = () => {
             <button onClick={() => navigate('/service')} className="bg-[#0bb8f9] text-white py-2 px-4 rounded-md m-2">
             서비스 알아보기
             </button>
+            <button onClick={() => navigate('/partnerrecruitment')} className="bg-[#0bb8f9] text-white py-2 px-4 rounded-md m-2">사업자등록 알아보기</button>
         </div>
     </section>
 
@@ -80,8 +81,8 @@ const Home: React.FC = () => {
             <button onClick={() => navigate('/commissionwrite')} className="text-white py-2 px-4 rounded-md m-2">의뢰작성하기</button>
             <button onClick={() => navigate('/commissionlist')} className="text-white py-2 px-4 rounded-md m-2">의뢰작성목록</button>
             <button onClick={() => navigate('/userorders')} className="text-white py-2 px-4 rounded-md m-2">견적확인하기</button>
-            <button onClick={() => navigate('/login')} className="text-white py-2 px-4 rounded-md m-2">로그인</button>/
-            <button onClick={() => navigate('/signup')} className="text-white py-2 px-4 rounded-md m-2">회원가입</button>
+            <button onClick={() => navigate('/loginselect')} className="text-white py-2 px-4 rounded-md m-2">로그인</button>/
+            <button onClick={() => navigate('/signupselect')} className="text-white py-2 px-4 rounded-md m-2">회원가입</button>
         </nav>
         <p className="mb-4">고객 센터: 123-456-7890 | 이메일: <a href="mailto:support@cleanroom.com" className="text-white underline">support@cleanroom.com</a></p>
         <div className="flex justify-center space-x-4">

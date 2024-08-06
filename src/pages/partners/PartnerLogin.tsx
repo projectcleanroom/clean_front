@@ -68,12 +68,12 @@ const PartnerLogin: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-5rem)]">
-      <div className="flex bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="grid bg-white shadow-md rounded-lg overflow-hidden">
         <div className="p-6 hidden sm:block">
           <img
             src={logo}
             alt="깔끔한방 로고"
-            className="w-full h-auto max-h-[400px] object-contain"
+            className="w-full h-auto max-h-[300px] object-contain"
           />
         </div>
         <div className="p-6">
@@ -101,15 +101,15 @@ const PartnerLogin: React.FC = () => {
                 <p className="text-red-500 text-sm mt-1">{errors.password}</p>
               )}
             </div>
-            <div className="flex space-x-4">
+            <div className="flex justify-center space-x-4">
               <button
-                className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
+                className="bg-[#144156] text-white py-2 px-4 rounded"
                 type="submit"
               >
                 로그인
               </button>
               <button
-                className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
+                className="bg-[#144156] text-white py-2 px-4 rounded"
                 onClick={() => navigate('/partnersignup')}
                 type="button"
               >

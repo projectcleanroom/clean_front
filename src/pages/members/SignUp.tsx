@@ -1,15 +1,15 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import logo from '../assets/logo.png';
-import EmailInput from '../components/EmailInput';
-import { useSignup } from '../hooks/useMembers';
-import { Member } from '../types/member';
+import logo from '../../assets/logo.png';
+import EmailInput from '../../components/members/EmailInput';
+import { useSignup } from '../../hooks/useMembers';
+import { Member } from '../../types/member';
 import {
   validateNickName,
   validatePassword,
   validatePhoneNumber,
-} from '../utils/validationUtils';
+} from '../../utils/validationUtils';
 
 interface SignUpForm extends Omit<Member, 'id'> {
   password: string;
@@ -84,12 +84,12 @@ const SignUp: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-5rem)]">
-      <div className="flex bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="grid bg-white shadow-md rounded-lg overflow-hidden">
         <div className="p-6 hidden sm:block">
           <img
             src={logo}
             alt="깔끔한방 로고"
-            className="w-full h-auto max-h-[400px] object-contain"
+            className="w-full h-auto max-h-[300px] object-contain"
           />
         </div>
         <div className="p-6">
@@ -135,7 +135,7 @@ const SignUp: React.FC = () => {
                 )}
               </div>
             ))}
-            <div className="flex space-x-4">
+            <div className="flex justify-center space-x-4">
               <button
                 className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"
                 type="submit"

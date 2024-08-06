@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth';
-import icon from '../assets/icon.png'
-const Header: React.FC = () => {
+import icon from '../../assets/icon.png'
+
+const PartnerHeader: React.FC = () => {
   const { isAuthenticated, logout, member } = useAuth();
   const navigate = useNavigate();
 
@@ -12,57 +13,54 @@ const Header: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#0bb8f9] text-white">
+    <div className="bg-[#144156] text-white">
       <div className="container mx-auto flex justify-between items-center p-4 max-w-screen-xl">
         <div className="flex-shrink-0">
           <img
             src={icon}
             alt="Home"
             className="h-12 cursor-pointer"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/partnerhome')}
           />
         </div>
         <div className="flex space-x-4 text-2xl">
-          <button className="h-btn" onClick={() => navigate('/service')}>
-            서비스 알아보기
-          </button>
           <button
-            className="h-btn"
-            onClick={() => navigate('/commissionwrite')}
+            className="bg-[#144156]"
+            onClick={() => navigate('/commissioncalling')}
           >
-            의뢰작성하기
+            회원 새 의뢰 보기
           </button>
-          <button className="h-btn" onClick={() => navigate('/commissionlist')}>
-            의뢰목록
+          <button className="bg-[#144156]" onClick={() => navigate('/commissionestimate')}>
+            견적 목록
           </button>
-          <button className="h-btn" onClick={() => navigate('/userorders')}>
-            견적확인하기
+          <button className="bg-[#144156]" onClick={() => navigate('/commissionmatching')}>
+            견적매칭 확인하기
           </button>
-        </div>
+                  </div>
 
         <div className="flex items-center">
           {isAuthenticated ? (
             <>
               <button
-                className="h-btn"
+                className="bg-[#144156]"
                 onClick={() => navigate(`/memberinfo/${member?.email}`)}
               >
                 마이 페이지
               </button>
               <div className="w-px h-6 bg-white mx-2"></div>
-              <button className="h-btn" onClick={handleLogout}>
+              <button className="bg-[#144156]" onClick={handleLogout}>
                 로그아웃
               </button>
             </>
           ) : (
             <>
-              <button className="h-btn text-2xl" onClick={() => navigate('/login')}>
-                Log In
+              <button className="bg-[#144156] text-2xl" onClick={() => navigate('/partnerlogin')}>
+                로그인
               </button>
               <div className="w-px h-6 bg-white mx-2"></div>
-              <button className="h-btn text-2xl" onClick={() => navigate('/signup')}>
+              <button className="bg-[#144156] text-2xl" onClick={() => navigate('/partnersignup')}>
                 회원가입
-              </button>
+              </button>              
             </>
           )}
         </div>
@@ -71,4 +69,4 @@ const Header: React.FC = () => {
   );
 };
 
-export default Header;
+export default PartnerHeader;
