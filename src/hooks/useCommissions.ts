@@ -1,21 +1,30 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import * as api from '../api/commissions';
 import { Commission } from '../types/commission';
 
 export const useCommissions = () => {
-  return useQuery<Commission[], Error>('commissions', api.fetchCommissions);
+  return useQuery({
+    queryKey: ['commission'],
+    queryFn: api.fetchCommissions,
+  });
 };
 
-export const useCreateCommission = () => {
+export const useCreateCommission = (): UseMutationResult<
+  Commission,
+  Error,
+  Omit<Commission, 'commissionId' | 'memberNick'>,
+  unknown
+> => {
   const queryClient = useQueryClient();
-  return useMutation<
-    Commission,
-    Error,
-    Omit<Commission, 'commissionId' | 'memberNick'>
-  >({
+  return useMutation({
     mutationFn: api.createCommission,
     onSuccess: (newCommission) => {
-      queryClient.invalidateQueries(['commission']);
+      queryClient.invalidateQueries({ queryKey: ['commission'] });
       queryClient.setQueryData(
         ['commission', newCommission.commissionId],
         newCommission,
@@ -26,34 +35,37 @@ export const useCreateCommission = () => {
 
 export const useDeleteCommission = () => {
   const queryClient = useQueryClient();
-  return useMutation<void, Error, number>({
+  return useMutation({
     mutationFn: api.deleteCommission,
     onSuccess: () => {
-      queryClient.invalidateQueries(['commissions']);
+      queryClient.invalidateQueries({ queryKey: ['commissions'] });
     },
   });
 };
 
 export const useCommission = (id: number) => {
-  return useQuery<Commission, Error>(['commission', id], () =>
-    api.fetchCommission(id),
-  );
+  return useQuery({
+    queryKey: ['commission', id],
+    queryFn: api.fetchCommission(id),
+  });
 };
 
 export const useUpdateCommission = () => {
   const queryClient = useQueryClient();
-  return useMutation<
-    Commission,
-    Error,
-    { id: number; commission: Partial<Commission> }
-  >({
-    mutationFn: ({ id, commission }) => api.updateCommission(id, commission),
+  return useMutation({
+    mutationFn: ({
+      id,
+      commission,
+    }: {
+      id: number;
+      commission: Partial<Commission>;
+    }) => api.updateCommission(id, commission),
     onSuccess: (updatedCommission) => {
       queryClient.setQueryData(
         ['commission', updatedCommission.commissionId],
         updatedCommission,
       );
-      queryClient.invalidateQueries(['commissions']);
+      queryClient.invalidateQueries({ queryKey: ['commissions'] });
     },
   });
 };
