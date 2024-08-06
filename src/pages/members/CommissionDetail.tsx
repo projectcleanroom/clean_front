@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useCommission, useUpdateCommission } from '../hooks/useCommissions';
-import { Commission, HouseType, CleanType } from '../types/commission';
+import { useCommission, useUpdateCommission } from '../../hooks/useCommissions';
+import { Commission, HouseType, CleanType } from '../../types/commission';
 
 const CommissionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();

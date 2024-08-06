@@ -1,12 +1,12 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAuth } from '../context/useAuth';
-import logo from '../assets/logo.png';
-import EmailInput from '../components/EmailInput';
-import { useLogin } from '../hooks/useMembers';
-import { validatePassword } from '../utils/validationUtils';
-import { Member } from '../types/member';
+import { useAuth } from '../../hooks/useAuth';
+import logo from '../../assets/logo.png';
+import EmailInput from '../../components/members/EmailInput';
+import { useLogin } from '../../hooks/useMembers';
+import { validatePassword } from '../../utils/validationUtils';
+import { Member } from '../../types/member';
 
 interface LoginForm {
   email: Member['email'];

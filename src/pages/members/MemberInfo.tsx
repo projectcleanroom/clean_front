@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useCurrentMember } from '../hooks/useMembers';
+import { useCurrentMember } from '../../hooks/useMembers';
 
 const MemberInfo: React.FC = () => {
   const { email } = useParams<{ email: string }>();

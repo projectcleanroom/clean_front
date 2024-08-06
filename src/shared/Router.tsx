@@ -1,17 +1,17 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
+import { useAuth } from '../hooks/useAuth';
 
-import Layout from '../components/Layout';
-import Login from '../pages/Login';
-import SignUp from '../pages/SignUp';
-import CommissionWrite from '../pages/CommissionWrite';
-import CommissionList from '../pages/CommissionList';
-import CommissionDetail from '../pages/CommissionDetail';
-import UserOrders from '../pages/UserOrders';
-import MemberInfo from '../pages/MemberInfo';
-import MemberEdit from '../pages/MemberEdit';
-import Home from '../pages/Home';
-import ServicePage from '../pages/ServicePage';
+import Layout from '../components/members/Layout';
+import Login from '../pages/members/Login';
+import SignUp from '../pages/members/SignUp';
+import CommissionWrite from '../pages/members/CommissionWrite';
+import CommissionList from '../pages/members/CommissionList';
+import CommissionDetail from '../pages/members/CommissionDetail';
+import UserOrders from '../pages/members/UserOrders';
+import MemberInfo from '../pages/members/MemberInfo';
+import MemberEdit from '../pages/members/MemberEdit';
+import Home from '../pages/members/Home';
+import ServicePage from '../pages/members/ServicePage';
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -35,13 +35,12 @@ const Router: React.FC = () => {
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/partnerlogin" element={<PartnerLogin />} />
-          <Route path="/partnersignup" element={<PartnerSignUp />} />
+          {/* <Route path="/partnerlogin" element={<PartnerLogin />} />
+          <Route path="/partnersignup" element={<PartnerSignUp />} /> */}
         </Route>
 
         {/* Protected Routes (for authenticated users) */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/mypage/:email" element={<MyPage />} />
           <Route path="/commissionwrite" element={<CommissionWrite />} />
           <Route path="/commissionlist" element={<CommissionList />} />
           <Route path="/commissiondetail/:id" element={<CommissionDetail />} />
