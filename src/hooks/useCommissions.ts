@@ -1,15 +1,16 @@
 import {
   useMutation,
-  UseMutationResult,
   useQuery,
   useQueryClient,
+  UseMutationResult,
+  UseQueryResult,
 } from '@tanstack/react-query';
 import * as api from '../api/commissions';
 import { Commission } from '../types/commission';
 
-export const useCommissions = () => {
+export const useCommissions = (): UseQueryResult<Commission[], Error> => {
   return useQuery({
-    queryKey: ['commission'],
+    queryKey: ['commissions'],
     queryFn: api.fetchCommissions,
   });
 };
@@ -24,7 +25,7 @@ export const useCreateCommission = (): UseMutationResult<
   return useMutation({
     mutationFn: api.createCommission,
     onSuccess: (newCommission) => {
-      queryClient.invalidateQueries({ queryKey: ['commission'] });
+      queryClient.invalidateQueries({ queryKey: ['commissions'] });
       queryClient.setQueryData(
         ['commission', newCommission.commissionId],
         newCommission,
@@ -33,7 +34,12 @@ export const useCreateCommission = (): UseMutationResult<
   });
 };
 
-export const useDeleteCommission = () => {
+export const useDeleteCommission = (): UseMutationResult<
+  void,
+  Error,
+  number,
+  unknown
+> => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: api.deleteCommission,
@@ -43,23 +49,24 @@ export const useDeleteCommission = () => {
   });
 };
 
-export const useCommission = (id: number) => {
+export const useCommission = (
+  id: number,
+): UseQueryResult<Commission, Error> => {
   return useQuery({
     queryKey: ['commission', id],
-    queryFn: api.fetchCommission(id),
+    queryFn: () => api.fetchCommission(id),
   });
 };
 
-export const useUpdateCommission = () => {
+export const useUpdateCommission = (): UseMutationResult<
+  Commission,
+  Error,
+  { id: number; commission: Partial<Commission> },
+  unknown
+> => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      commission,
-    }: {
-      id: number;
-      commission: Partial<Commission>;
-    }) => api.updateCommission(id, commission),
+    mutationFn: ({ id, commission }) => api.updateCommission(id, commission),
     onSuccess: (updatedCommission) => {
       queryClient.setQueryData(
         ['commission', updatedCommission.commissionId],

@@ -21,3 +21,14 @@ export const fetchCommission = async (id: number): Promise<Commission> => {
   const response = await api.get<Commission>(`/commission/${id}`);
   return response.data;
 };
+
+export const updateCommission = async (
+  id: number,
+  commission: Partial<Commission>,
+): Promise<Commission> => {
+  const response = await api.put<Commission>(
+    `/api/commission/${id}`,
+    commission,
+  );
+  return response.data;
+};
