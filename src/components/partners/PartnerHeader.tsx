@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import icon from '../assets/icon.png'
 
-const Header: React.FC = () => {
+const PartnerHeader: React.FC = () => {
 
   const { isAuthenticated, logout, member } = useAuth();
   const navigate = useNavigate();
