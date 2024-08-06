@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import { useCreateCommission } from '../../hooks/useCommissions';
 
 const CommissionWrite: React.FC = () => {

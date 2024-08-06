@@ -12,11 +12,12 @@ export const useCreateCommission = () => {
     Commission,
     Error,
     Omit<Commission, 'commissionId' | 'memberNick'>
-  >(api.createCommission, {
+  >({
+    mutationFn: api.createCommission,
     onSuccess: (newCommission) => {
-      queryClient.invalidateQueries(['commissions']);
+      queryClient.invalidateQueries(['commission']);
       queryClient.setQueryData(
-        ['Commission', newCommission.commissionId],
+        ['commission', newCommission.commissionId],
         newCommission,
       );
     },
@@ -25,9 +26,10 @@ export const useCreateCommission = () => {
 
 export const useDeleteCommission = () => {
   const queryClient = useQueryClient();
-  return useMutation<void, Error, number>(api.deleteCommission, {
+  return useMutation<void, Error, number>({
+    mutationFn: api.deleteCommission,
     onSuccess: () => {
-      queryClient.invalidateQueries('commissions');
+      queryClient.invalidateQueries(['commissions']);
     },
   });
 };
@@ -44,13 +46,14 @@ export const useUpdateCommission = () => {
     Commission,
     Error,
     { id: number; commission: Partial<Commission> }
-  >(({ id, commission }) => api.updateCommission(id, commission), {
+  >({
+    mutationFn: ({ id, commission }) => api.updateCommission(id, commission),
     onSuccess: (updatedCommission) => {
       queryClient.setQueryData(
         ['commission', updatedCommission.commissionId],
         updatedCommission,
       );
-      queryClient.invalidateQueries('commissions');
+      queryClient.invalidateQueries(['commissions']);
     },
   });
 };
