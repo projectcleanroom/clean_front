@@ -30,12 +30,14 @@ import Layout from '../components/exclude/Layout';
 import MyEstimates from '../pages/partners/MyEstimates';
 
 const ProtectedRoute: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <Outlet /> : <Navigate to="/loginselect" replace />;
+  const { isAuthenticated} = useAuth();
+  // if(loading){return <></>};
+  console.log(isAuthenticated)  
+  return isAuthenticated ? <Outlet /> : <Navigate to="/loginselect" />;
 };
 
 const PublicOnlyRoute: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated} = useAuth();  
   return isAuthenticated ? <Navigate to="/" replace /> : <Outlet />;
 };
 
