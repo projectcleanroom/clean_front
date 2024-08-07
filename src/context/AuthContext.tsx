@@ -8,7 +8,7 @@ export interface AuthContextType {
   member: Member | null;
   login: (token: string, refreshToken: string) => void;
   logout: () => void;
-  fetchProfile: () => Promise<void>;
+  fetchProfile: () => Promise<Boolean>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -22,34 +22,40 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [member, setMember] = useState<Member | null>(null);
-  const [loading, setloading] = useState<boolean>(true);
-
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    console.log(storedToken)
-    if (storedToken) {
-      setIsAuthenticated(true);
-    }
-    setloading(true);
-  }, []);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchProfile = async () => {
+    setLoading(true);
     try {
       const response = await api.get<Member>('/members/profile');
       setMember(response.data);
+      setIsAuthenticated(true);
+      return true;
     } catch (error) {
       console.error('Failed to fetch profile data:', error);
-      // 에러 처리 (예: 토큰이 유효하지 않은 경우 로그아웃)
       logout();
+      return false;
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        await fetchProfile();
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
     setIsAuthenticated(true);
-    // 프로필 정보를 즉시 가져오지 않고, 필요할 때 fetchProfile을 호출하도록 변경
+    fetchProfile();
   };
 
   const logout = () => {

@@ -23,50 +23,49 @@ import PartnerLogin from '../pages/partners/PartnerLogin';
 import PartnerSignUp from '../pages/partners/PartnerSignUp';
 import PartnerRecruitment from '../pages/exclude/PartnerRecruitment';
 import CommissionCalling from '../pages/partners/CommissionCalling';
+import CommissionEsimate from '../pages/partners/CommissionEsimate';
 import CommissionMatching from '../pages/partners/CommissionMatching';
-import CommissionEstimate from '../pages/partners/CommissionEsimate';
 import MemberHome from '../pages/members/MemberHome';
 import Layout from '../components/exclude/Layout';
-import MyEstimates from '../pages/partners/MyEstimates';
 
 const ProtectedRoute: React.FC = () => {
-  const { isAuthenticated} = useAuth();
-  // if(loading){return <></>};
-  console.log(isAuthenticated)  
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
   return isAuthenticated ? <Outlet /> : <Navigate to="/loginselect" />;
 };
 
 const PublicOnlyRoute: React.FC = () => {
-  const { isAuthenticated} = useAuth();  
+  const { isAuthenticated } = useAuth();
   return isAuthenticated ? <Navigate to="/" replace /> : <Outlet />;
 };
 
 const Router: React.FC = () => {
+  
   return (
     <Routes>
       {/* exclude 레이아웃 */}
       <Route element={<Layout />}>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />        
+        <Route path="/" element={<Home />} />
         <Route path="/service" element={<ServicePage />} />
         <Route path="/partnerrecruitment" element={<PartnerRecruitment />} />
         <Route path="/loginselect" element={<LoginSelector />} />
-        <Route path="/signupselect" element={<SignUpSelector />} />        
+        <Route path="/signupselect" element={<SignUpSelector />} />
 
         {/* Public Only Routes (for non-authenticated users) */}
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-        <Route path="/partnerlogin" element={<PartnerLogin />} />
-        <Route path="/partnersignup" element={<PartnerSignUp />} />
-        </Route>        
+          <Route path="/partnerlogin" element={<PartnerLogin />} />
+          <Route path="/partnersignup" element={<PartnerSignUp />} />
+        </Route>
       </Route>
 
       {/* 멤버 레이아웃 */}
       <Route element={<MemberLayout />}>
         {/* Protected Routes (for authenticated users) */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/memberhome" element={<MemberHome />} />          
+          <Route path="/memberhome" element={<MemberHome />} />
           <Route path="/member/:email" element={<MemberInfo />} />
           <Route path="/member/:email/edit" element={<MemberEdit />} />
           <Route path="/commissionwrite" element={<CommissionWrite />} />
@@ -77,19 +76,16 @@ const Router: React.FC = () => {
       </Route>
 
       {/* 파트너 레이아웃 */}
-      <Route element={<PartnerLayout />}>        
-          <Route path="/partnerhome" element={<PartnerHome />} />
-          <Route path="/commissioncalling" element={<CommissionCalling />} />
-          <Route path="/commissionestimate" element={<CommissionEstimate />} />
-          <Route path="/commissionmatching" element={<CommissionMatching />} />
-          <Route path="/myestimates" element={<MyEstimates />} />
+      <Route element={<PartnerLayout />}>
+        <Route path="/partnerhome" element={<PartnerHome />} />
+        <Route path="/commissioncalling" element={<CommissionCalling />} />
+        <Route path="/commissionestimate" element={<CommissionEsimate />} />
+        <Route path="/commissionmatching" element={<CommissionMatching />} />
         {/* Public Only Routes (for non-authenticated users) */}
-        <Route element={<PublicOnlyRoute />}>
-        </Route>
+        <Route element={<PublicOnlyRoute />}></Route>
 
         {/* Protected Routes (for authenticated users) */}
-        <Route element={<ProtectedRoute />}>
-        </Route>
+        <Route element={<ProtectedRoute />}></Route>
       </Route>
     </Routes>
   );
