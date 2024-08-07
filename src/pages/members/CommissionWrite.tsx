@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateCommission } from '../../hooks/useCommissions';
+import logo from '../../assets/logo.png'
 
 const CommissionWrite: React.FC = () => {
   const navigate = useNavigate();
@@ -47,6 +48,13 @@ const CommissionWrite: React.FC = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+      <div className="p-6 hidden sm:block">
+          <img
+            src={logo}
+            alt="깔끔한방 로고"
+            className="w-full h-auto max-h-[300px] object-contain"
+          />
+        </div>
         <h1 className="text-2xl font-bold mb-6 text-center">
           아래 요구사항을 입력해주세요
         </h1>
