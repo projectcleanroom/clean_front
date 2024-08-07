@@ -27,7 +27,7 @@ export const updateCommission = async (
   commission: Partial<Commission>,
 ): Promise<Commission> => {
   const response = await api.put<Commission>(
-    `/api/commission/${id}`,
+    `/commission/${id}`,
     commission,
   );
   return response.data;
