@@ -44,6 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
     setIsAuthenticated(true);
+    // 프로필 정보를 즉시 가져오지 않고, 필요할 때 fetchProfile을 호출하도록 변경
   };
 
   const logout = () => {

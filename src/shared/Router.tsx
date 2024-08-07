@@ -23,10 +23,11 @@ import PartnerLogin from '../pages/partners/PartnerLogin';
 import PartnerSignUp from '../pages/partners/PartnerSignUp';
 import PartnerRecruitment from '../pages/exclude/PartnerRecruitment';
 import CommissionCalling from '../pages/partners/CommissionCalling';
-import CommissionEsimate from '../pages/partners/CommissionEsimate';
 import CommissionMatching from '../pages/partners/CommissionMatching';
+import CommissionEstimate from '../pages/partners/CommissionEsimate';
 import MemberHome from '../pages/members/MemberHome';
 import Layout from '../components/exclude/Layout';
+import MyEstimates from '../pages/partners/MyEstimates';
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -77,8 +78,9 @@ const Router: React.FC = () => {
       <Route element={<PartnerLayout />}>        
           <Route path="/partnerhome" element={<PartnerHome />} />
           <Route path="/commissioncalling" element={<CommissionCalling />} />
-          <Route path="/commissionestimate" element={<CommissionEsimate />} />
+          <Route path="/commissionestimate" element={<CommissionEstimate />} />
           <Route path="/commissionmatching" element={<CommissionMatching />} />
+          <Route path="/myestimates" element={<MyEstimates />} />
         {/* Public Only Routes (for non-authenticated users) */}
         <Route element={<PublicOnlyRoute />}>
         </Route>
