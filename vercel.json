@@ -7,11 +7,13 @@
     {
       "source": "/partner/(.*)",
       "destination": "https://pt.clean-room.co.kr/api/$2"
+
     },
     {
       "source": "/((?!api|partner).*)",
       "destination": "/index.html"
     }
+
   ],
   "headers": [
     {
@@ -34,3 +36,4 @@
     }
   ]
 }
+

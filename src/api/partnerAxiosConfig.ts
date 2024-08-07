@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const partnerApi = axios.create({
-  baseURL: '/partner',  // 프록시 설정에 맞추어 경로 설정
+  baseURL: '/partner',
 });
 
 partnerApi.interceptors.request.use(
@@ -23,7 +23,7 @@ partnerApi.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const res = await axios.post('/api/refresh', { refreshToken });
+        const res = await axios.post(`/refresh`, { refreshToken });
         const { token } = res.data;
         localStorage.setItem('token', token);
         partnerApi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
