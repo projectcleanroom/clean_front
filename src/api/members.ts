@@ -27,7 +27,7 @@ export const deleteMember = async (email: string): Promise<void> => {
 export const login = async (
   credentials: LoginCredentials,
 ): Promise<LoginResponse> => {
-  const response = await api.post('/members/login', credentials);
+  const response = await api.post('https://mb.clean-room.co.kr/api/members/login', credentials);
 
   const token = response.headers['authorization'];
   const refreshToken = response.headers['refresh-token'];
