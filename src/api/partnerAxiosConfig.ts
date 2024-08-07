@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-const partnerApi = axios.create({
-  baseURL: '/partner',  // 프록시 설정에 맞추어 경로 설정
-});
+const baseURL = import.meta.env.PROD
+  ? '/partner'
+  : import.meta.env.VITE_PARTNER_API_URL;
+
+const partnerApi = axios.create({ baseURL });
 
 partnerApi.interceptors.request.use(
   (config) => {
@@ -23,7 +25,7 @@ partnerApi.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const res = await axios.post('/api/refresh', { refreshToken });
+        const res = await axios.post(`${baseURL}/refresh`, { refreshToken });
         const { token } = res.data;
         localStorage.setItem('token', token);
         partnerApi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
