@@ -1,13 +1,15 @@
 {
   "rewrites": [
     {
-      "destination": "https://mb.clean-room.co.kr/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "https://mb.clean-room.co.kr/$1"
     },
     {
-      "destination": "https://pt.clean-room.co.kr/api/:path*"
+      "source": "/partner/(.*)",
+      "destination": "https://pt.clean-room.co.kr/$2"
     },
     {
-      "source": "/((?!api/.*|partner/.*).*)",
+      "source": "/((?!api|partner).*)",
       "destination": "/index.html"
     }
   ],
