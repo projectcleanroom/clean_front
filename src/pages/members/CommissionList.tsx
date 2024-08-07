@@ -17,6 +17,7 @@ const CommissionList: React.FC = () => {
         console.log(`Commission with id: ${id} deleted successfully`);
       } catch (error) {
         console.error('Delete failed:', error);
+        alert('삭제에 실패했습니다. 다시 시도해주세요.');
       }
     }
   };
