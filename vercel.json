@@ -1,12 +1,10 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*/",
-      "destination": "https://mb.clean-room.co.kr/:path*"
+      "destination": "https://mb.clean-room.co.kr/api/:path*"
     },
     {
-      "source": "/partner/:path*/",
-      "destination": "https://pt.clean-room.co.kr/:path*"
+      "destination": "https://pt.clean-room.co.kr/api/:path*"
     },
     {
       "source": "/((?!api/.*|partner/.*).*)",
