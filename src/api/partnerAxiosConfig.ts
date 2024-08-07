@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-const baseURL = import.meta.env.PROD
-  ? '/partner'
-  : import.meta.env.VITE_PARTNER_API_URL;
-
-const partnerApi = axios.create({ baseURL });
+const partnerApi = axios.create({
+  baseURL: '/partner',
+});
 
 partnerApi.interceptors.request.use(
   (config) => {
