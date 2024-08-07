@@ -17,7 +17,7 @@ export interface Commission {
   houseType: HouseType;
   cleanType: CleanType;
   addressId: number;
-  image: string;
+  image?: string;
   desiredDate: string;
   significant: string;
 }

@@ -19,9 +19,11 @@ export const useCurrentMember = () => {
 export const useUpdateMember = () => {
   const queryClient = useQueryClient();
   return useMutation<Member, Error, Partial<Member>>({
-    mutationFn: api.updateMember,
-    onSuccess: (updatedMember) => {
-      queryClient.setQueryData(['currentMember'], updatedMember);
+    mutationFn: (updataMember: Partial<Member>) =>
+      api.updateMember(updataMember),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['currentMember'], data);
+      queryClient.invalidateQueries({ queryKey: ['currentMember'] });
     },
   });
 };
