@@ -1,3 +1,4 @@
+// src/api/axiosConfig.ts
 import axios from 'axios';
 
 const api = axios.create({
@@ -29,8 +30,6 @@ api.interceptors.response.use(
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // localStorage.removeItem('token');
-        // localStorage.removeItem('refreshToken');
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }
