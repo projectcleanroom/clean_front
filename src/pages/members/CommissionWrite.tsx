@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateCommission } from '../../hooks/useCommissions';
+import { HouseType, CleanType, Commission} from '../../types/commission'
 import logo from '../../assets/logo.png'
 
 const CommissionWrite: React.FC = () => {
   const navigate = useNavigate();
   const createCommissionMutation = useCreateCommission();
 
-  const [form, setForm] = useState({
-    size: '',
-    houseType: '',
-    cleanType: '',
-    addressId: '',
+  const [form, setForm] = useState<Omit<Commission, 'commissionId' | 'memberNick'>>({
+    size: 0,
+    houseType: HouseType.O,
+    cleanType: CleanType.일반,
+    addressId: 0,
     image: '',
     desiredDate: '',
     significant: '',
@@ -21,7 +22,8 @@ const CommissionWrite: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev,
+      [name]: name === 'size' || name === 'addressId' ? Number(value) : value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,17 +31,12 @@ const CommissionWrite: React.FC = () => {
 
     try {
       const newCommission = {
-        size: Number(form.size),
-        houseType: form.houseType,
-        cleanType: form.cleanType,
-        addressId: Number(form.addressId),
-        image: form.image,
+        ...form,
         desiredDate: new Date(form.desiredDate).toISOString(),
-        significant: form.significant,
       };
 
       await createCommissionMutation.mutateAsync(newCommission);
-      navigate('/service');
+      navigate('/commissionlist');
     } catch (error) {
       console.error('Failed to create commission:', error);
     }
@@ -138,9 +135,9 @@ const CommissionWrite: React.FC = () => {
           <button
             className="w-full bg-[#0bb8f9] text-white py-2 px-4 rounded hover:bg-blue-600"
             type="submit"
-            disabled={createCommissionMutation.isLoading}
+            disabled={createCommissionMutation.isPending}
           >
-            {createCommissionMutation.isLoading
+            {createCommissionMutation.isPending
               ? '처리 중...'
               : '의뢰 작성 완료하기'}
           </button>

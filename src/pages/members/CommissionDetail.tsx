@@ -7,15 +7,9 @@ const CommissionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const commissionId = Number(id);
-  const {
-    data: commission,
-    isLoading,
-    error,
-  } = useCommission(commissionId) as {
-    data: Commission | undefined;
-    isLoading: boolean;
-    error: Error | null;
-  };
+
+  const { data: commission, isLoading, error } = useCommission(commissionId);
+
   const updateCommissionMutation = useUpdateCommission();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +24,7 @@ const CommissionDetail: React.FC = () => {
   }, [commission]);
 
   if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) return <p>Error: {(error as Error).message}</p>;
   if (!commission) return <p>Commission not found</p>;
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -54,7 +48,11 @@ const CommissionDetail: React.FC = () => {
     >,
   ) => {
     const { name, value } = e.target;
-    setEditedCommission((prev) => (prev ? { ...prev, [name]: value } : undefined));
+    setEditedCommission((prev) =>
+      prev
+        ? { ...prev, [name]: name === 'size' ? Number(value) : value }
+        : undefined,
+    );
   };
 
   return (
@@ -126,8 +124,11 @@ const CommissionDetail: React.FC = () => {
             <button
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded"
+              disabled={updateCommissionMutation.isPending}
             >
-              Save Changes
+              {updateCommissionMutation.isPending
+                ? 'Saving...'
+                : 'Save Changes'}
             </button>
             <button
               type="button"

@@ -4,12 +4,12 @@ import { Commission } from '../types/commission';
 export const createCommission = async (
   commission: Omit<Commission, 'commissionId' | 'memberNick'>,
 ): Promise<Commission> => {
-  const response = await api.post<Commission>('/commissions', commission);
+  const response = await api.post<Commission>('/commission', commission);
   return response.data;
 };
 
 export const fetchCommissions = async (): Promise<Commission[]> => {
-  const response = await api.get<Commission[]>('/commissions');
+  const response = await api.get<Commission[]>('/commission');
   return response.data;
 };
 
@@ -18,6 +18,17 @@ export const deleteCommission = async (id: number): Promise<void> => {
 };
 
 export const fetchCommission = async (id: number): Promise<Commission> => {
-  const response = await api.get<Commission>(`/commissions/${id}`);
+  const response = await api.get<Commission>(`/commission/${id}`);
+  return response.data;
+};
+
+export const updateCommission = async (
+  id: number,
+  commission: Partial<Commission>,
+): Promise<Commission> => {
+  const response = await api.put<Commission>(
+    `/api/commission/${id}`,
+    commission,
+  );
   return response.data;
 };
