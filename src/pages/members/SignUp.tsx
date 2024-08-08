@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import logo from '../../assets/logo.png';
-import EmailInput from '../../components/members/EmailInput';
+import EmailInput from '../../utils/EmailInput';
 import { useSignup } from '../../hooks/useMembers';
 import { Member } from '../../types/member';
 import {

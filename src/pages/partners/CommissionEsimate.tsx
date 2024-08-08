@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import partnerApi from '../../api/partnerAxiosConfig';
-import ErrorNotification from '../../components/partners/ErrorNotification';
+import ErrorNotification from '../../utils/ErrorNotification';
 
 const CommissionEstimate: React.FC = () => {
   const { commissionId } = useParams<{ commissionId: string }>();
