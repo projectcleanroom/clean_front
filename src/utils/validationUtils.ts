@@ -22,18 +22,39 @@ export const validateEmail = createValidator(
 );
 
 export const validatePassword = createValidator(
-  (password) => /^(?=.*[a-z])(?=.*\d)(?=.*[~!@$%^&*_])[a-zA-Z\d~!@$%^&*_]{8,}$/.test(password),
-  '비밀번호는 최소 8자 이상이어야 하며, 소문자, 숫자, 특수 문자(~!@$%^&*_)를 포함해야 합니다.'
+  (password) =>
+    /^(?=.*[a-z])(?=.*\d)(?=.*[~!@$%^&*_])[a-zA-Z\d~!@$%^&*_]{8,}$/.test(
+      password,
+    ),
+  '최소 8자 이상, 대소문자, 숫자, 특수 문자를 포함해야 합니다.',
 );
+
+export const validateConfirmPassword = (
+  password: string,
+  confirmPassword: string,
+) => {
+  if (password !== confirmPassword) {
+    return { isValid: false, message: '비밀번호가 일치하지 않습니다.' };
+  }
+  const isValid = /^(?=.*[a-z])(?=.*[~!@$%^&*_])[a-zA-Z\d~!@#$%^&*_]{8,}$/.test(
+    confirmPassword,
+  );
+  return {
+    isValid,
+    message: isValid
+      ? ''
+      : '최소 8자 이상, 대소문자, 숫자, 특수 문자를 포함해야합니다',
+  };
+};
 
 export const validateNickName = createValidator(
   (nick) => /^[a-zA-Z0-9가-힣_-]{1,15}$/.test(nick),
-  '닉네임은 숫자, 대문자, 소문자, 한글, 밑줄(_), 대시(-)만 포함할 수 있으며, 길이는 1자에서 15자 사이여야 합니다.'
+  '닉네임은 숫자, 대문자, 소문자, 한글, 밑줄(_), 대시(-)만 포함할 수 있으며, 길이는 1자에서 15자 사이여야 합니다.',
 );
 
 export const validatePhoneNumber = createValidator(
   (phoneNumber) => /^01\d{9}$/.test(phoneNumber),
-  '전화번호는 01012345678 형식이어야 합니다.'
+  '전화번호는 01012345678 형식이어야 합니다.',
 );
 
 // 의뢰 유효성검사
