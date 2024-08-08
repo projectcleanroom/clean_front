@@ -1,13 +1,13 @@
 export enum HouseType {
-  O = 'O',
-  A = 'A',
-  H = 'H',
-  T = 'T'
+  APT = 'APT',
+  OneRoom = 'OneRoom',
+  House = 'House',
+  Toilet = 'Toilet',
 }
 
 export enum CleanType {
-  일반 = '일반',
-  특수 = '특수'
+  Normal = 'Normal',
+  Special = 'Special'
 }
 
 export interface Commission {
