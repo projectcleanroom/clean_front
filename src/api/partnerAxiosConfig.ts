@@ -23,13 +23,14 @@ partnerApi.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const res = await axios.post(`/refresh`, { refreshToken });
+        const res = await axios.post(`/partner/refresh`, { refreshToken });
         const { token } = res.data;
         localStorage.setItem('token', token);
         partnerApi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         return partnerApi(originalRequest);
       } catch (refreshError) {
-        throw refreshError;
+        window.location.href = '/partnerlogin';
+        return Promise.reject(refreshError);
       }
     }
     return Promise.reject(error);
