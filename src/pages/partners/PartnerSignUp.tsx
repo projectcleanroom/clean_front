@@ -1,19 +1,19 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios, { AxiosError } from 'axios';
 import logo from '../../assets/logo.png';
-import EmailInput from '../../components/members/EmailInput';
+import EmailInput from '../../utils/EmailInput';
+import { Partner } from '../../types/partner';
+import { validatePassword, validatePhoneNumber } from '../../utils/validationUtils';
+import { usePartnerSignup } from '../../hooks/usePartners';
 
-
-interface Member {
+interface PartnerSignUpForm extends Omit<Partner, 'id'> {
   email: string;
   password: string;
   phoneNumber: string;
   managerName: string;
   companyName: string;
   businessType: string;
-  partnerType: string;  
-  token: string;
+  partnerType: 'INDIVIDUAL' | 'CORPORATE';
 }
 
 interface FormErrors {
@@ -23,18 +23,19 @@ interface FormErrors {
   managerName: string;
   companyName: string;
   businessType: string;
-  partnerType: string;  
+  partnerType: string;
+  general?: string;
 }
 
 const PartnerSignUp: React.FC = () => {
-  const [formData, setformData] = useState<Omit<Member, 'token'>>({
+  const [formData, setFormData] = useState<PartnerSignUpForm>({
     email: '',
     password: '',
     phoneNumber: '',
     managerName: '',
     companyName: '',
     businessType: '',
-    partnerType: '',
+    partnerType: 'INDIVIDUAL',  // Default value
   });
   const [errors, setErrors] = useState<FormErrors>({
     email: '',
@@ -46,53 +47,45 @@ const PartnerSignUp: React.FC = () => {
     partnerType: '',
   });
   const navigate = useNavigate();
+  const signupMutation = usePartnerSignup();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setformData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    let validationResult;
+    switch (name) {
+      case 'password':
+        validationResult = validatePassword(value);
+        break;
+      case 'phoneNumber':
+        validationResult = validatePhoneNumber(value);
+        break;
+      default:
+        return;
+    }
+    setErrors((prev) => ({ ...prev, [name]: validationResult.message }));
   };
 
   const signUpSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (
-      Object.values(formData).some((val) => !val) ||
-      Object.values(errors).some((err) => err)
-    ) {
-      alert('입력한 정보를 다시 확인해주세요.');
+    if (Object.values(errors).some((err) => err !== '')) {
+      setErrors((prev) => ({
+        ...prev,
+        general: '입력한 정보를 다시 확인해주세요.',
+      }));
       return;
     }
+
     try {
-      // 새 사용자 생성
-      const response = await axios.post<Member>(
-        `/api/members/signup`,
-        formData,
-      );
-      if (response.status === 201) {
-        alert('회원가입 성공!');
-        navigate(`/partnerlogin`);
-      } else {
-        alert(`회원가입 실패: ${response.statusText}`);
-      }
+      await signupMutation.mutateAsync(formData);
+      navigate(`/partnerlogin`);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string }>;
-        if (axiosError.response) {
-          // 서버에서 응답을 받았지만 2XX 범위가 아닌 상태 코드가 반환된 경우
-          alert(
-            `회원가입 실패: ${axiosError.response.data?.message || axiosError.message}`,
-          );
-        } else if (axiosError.request) {
-          // 요청이 이루어졌으나 응답을 받지 못한 경우
-          alert(`서버와의 통신에 실패했습니다. 네트워크 연결을 확인해주세요.`);
-        } else {
-          // 요청을 설정하는 중에 문제가 발생한 경우
-          alert(`요청을 설정 중 오류가 발생했습니다: ${axiosError.message}`);
-        }
-      } else {
-        // 예상치 못한 에러
-        console.error(`unexpected error`, error);
-        alert(`예상치 못한 오류가 발생했습니다.`);
-      }
+      console.error('signup error:', error);
+      setErrors((prev) => ({
+        ...prev,
+        general: '회원가입에 실패했습니다. 다시 시도해주세요.',
+      }));
     }
   };
 
@@ -117,24 +110,30 @@ const PartnerSignUp: React.FC = () => {
         </div>
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-4">파트너 회원가입</h2>
+          {errors.general && (
+            <div
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+              role="alert"
+            >
+              <span className="block sm:inline">{errors.general}</span>
+            </div>
+          )}
           <form onSubmit={signUpSubmit} className="space-y-4">
             <EmailInput
               email={formData.email}
-              setEmail={(email) => setformData((prev) => ({ ...prev, email }))}
+              setEmail={(email) => setFormData((prev) => ({ ...prev, email }))}
               emailError={errors.email}
               setEmailError={(error) =>
                 setErrors((prev) => ({ ...prev, email: error }))
               }
             />
-            {['password', 'phoneNumber', 'managerName', 'companyName', 'businessType', 'partnerType'].map((field) => (
+            {['password', 'phoneNumber', 'managerName', 'companyName', 'businessType'].map((field) => (
               <div key={field}>
                 <label className="block mb-1">{fieldLabels[field]}</label>
                 <input
                   type={field === 'password' ? 'password' : 'text'}
                   name={field}
-                  value={
-                    formData[field as keyof Omit<Member, 'token' | 'email'>]
-                  }
+                  value={formData[field as keyof PartnerSignUpForm]}
                   onChange={handleChange}
                   placeholder={`${fieldLabels[field]}를 입력해주세요${field === 'phoneNumber' ? " ('-' 제외)" : ''}`}
                   className="w-full p-2 border border-gray-300 rounded"
@@ -146,6 +145,18 @@ const PartnerSignUp: React.FC = () => {
                 )}
               </div>
             ))}
+            <div>
+              <label className="block mb-1">{fieldLabels['partnerType']}</label>
+              <select
+                name="partnerType"
+                value={formData.partnerType}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              >
+                <option value="INDIVIDUAL">개인 사업자</option>
+                <option value="CORPORATE">법인 사업자</option>
+              </select>
+            </div>
             <div className="flex justify-center space-x-4">
               <button
                 className="bg-[#144156] text-white py-2 px-4 rounded"
@@ -169,4 +180,3 @@ const PartnerSignUp: React.FC = () => {
 };
 
 export default PartnerSignUp;
-
