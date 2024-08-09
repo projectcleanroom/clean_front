@@ -6,6 +6,7 @@ import {
   validatePhoneNumber,
 } from '../../utils/validationUtils';
 import { FormEvent, useEffect, useState } from 'react';
+import logo from '../../assets/logo.png';
 
 interface FormErrors {
   nick: string;
@@ -96,6 +97,13 @@ const MemberEdit: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto mt-10">
+      <div className="p-6 hidden sm:block">
+          <img
+            src={logo}
+            alt="깔끔한방 로고"
+            className="w-full h-auto max-h-[200px] object-contain"
+          />
+        </div>
       <h2 className="text-2xl font-bold mb-4">회원 정보 수정</h2>
       {errors.general && (
         <div

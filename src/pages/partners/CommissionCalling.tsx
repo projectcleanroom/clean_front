@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import partnerApi from '../../api/partnerAxiosConfig';
+import { useAuth } from '../../hooks/useAuth';
 
 const CommissionCalling: React.FC = () => {
   const [commissions, setCommissions] = useState([]);
@@ -8,6 +9,7 @@ const CommissionCalling: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
     const fetchCommissions = async () => {
@@ -21,12 +23,19 @@ const CommissionCalling: React.FC = () => {
         ]);
         setHasMore(response.data.content.length > 0);
       } catch (err) {
-        console.error('Error fetching commissions', err);
+        console.error('Error fetching commissions', err);   
+        if (err.response && err.response.status === 401) {
+          console.error("unauthorized - Logging out");
+          logout(); // 로그아웃 처리
+          navigate('/partnerlogin');
+        } else {
+          console.error('An error occurred:', err.message);
+        }
       }
     };
-
+   
     fetchCommissions();
-  }, [page]);
+   }, [page, navigate, logout]);
 
   const lastCommissionElementRef = (node: HTMLDivElement) => {
     if (observer.current) observer.current.disconnect();

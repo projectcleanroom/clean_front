@@ -19,7 +19,8 @@ export const useCurrentPartner = () => {
 export const useUpdatePartner = () => {
   const queryClient = useQueryClient();
   return useMutation<Partner, Error, Partial<Partner>>({
-    mutationFn: partner.updatePartner,
+    mutationFn: (updatePartner: Partial<Partner>) =>
+      partner.updatePartner(updatePartner),
     onSuccess: (data) => {
       queryClient.setQueryData(['currentPartner'], data);
       queryClient.invalidateQueries({ queryKey: ['currentPartner'] });

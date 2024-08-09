@@ -2,6 +2,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useCurrentPartner, useUpdatePartner } from '../../hooks/usePartners';
 import { validatePassword, validatePhoneNumber } from '../../utils/validationUtils';
 import { FormEvent, useEffect, useState } from 'react';
+import logo from '../../assets/logo.png';
+
+interface PartnerEditForm {
+  email: string;
+  password: string;
+  phoneNumber: string;
+  managerName: string;
+  companyName: string;
+  businessType: string;
+  partnerType: 'INDIVIDUAL' | 'CORPORATION' | 'PUBLIC_INSTITUTION';
+}
 
 interface FormErrors {
   password: string;
@@ -13,15 +24,6 @@ interface FormErrors {
   general?: string;
 }
 
-interface PartnerEditForm {
-  email: string;
-  password: string;
-  phoneNumber: string;
-  managerName: string;
-  companyName: string;
-  businessType: string;
-  partnerType: 'INDIVIDUAL' | 'CORPORATE';
-}
 
 const PartnerEdit: React.FC = () => {
   const { email } = useParams<{ email: string }>();
@@ -56,7 +58,7 @@ const PartnerEdit: React.FC = () => {
         managerName: partner.managerName,
         companyName: partner.companyName,
         businessType: partner.businessType,
-        partnerType: partner.partnerType as 'INDIVIDUAL' | 'CORPORATE',
+        partnerType: partner.partnerType as 'INDIVIDUAL' | 'CORPORATION' | 'PUBLIC_INSTITUTION'
       });
     }
   }, [partner]);
@@ -112,6 +114,13 @@ const PartnerEdit: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto mt-10">
+      <div className="p-6 hidden sm:block">
+          <img
+            src={logo}
+            alt="깔끔한방 로고"
+            className="w-full h-auto max-h-[200px] object-contain"
+          />
+        </div>
       <h2 className="text-2xl font-bold mb-4">파트너 정보 수정</h2>
       {errors.general && (
         <div
@@ -224,7 +233,8 @@ const PartnerEdit: React.FC = () => {
             onChange={handleChange}
           >
             <option value="INDIVIDUAL">개인</option>
-            <option value="CORPORATE">법인</option>
+            <option value="CORPORATION">법인</option>
+            <option value="PUBLIC_INSTITUTION">공공 기관</option>
           </select>
           {errors.partnerType && (
             <p className="text-red-500 text-xs italic">{errors.partnerType}</p>

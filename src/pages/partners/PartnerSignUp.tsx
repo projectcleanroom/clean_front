@@ -14,7 +14,7 @@ interface PartnerSignUpForm extends Omit<Partner, 'id'> {
   managerName: string;
   companyName: string;
   businessType: string;
-  partnerType: 'INDIVIDUAL' | 'CORPORATE';
+  partnerType: 'INDIVIDUAL' | 'CORPORATION' | 'PUBLIC_INSTITUTION';
 }
 
 interface FormErrors {
@@ -165,7 +165,8 @@ const PartnerSignUp: React.FC = () => {
                 className="w-full p-2 border border-gray-300 rounded"
               >
                 <option value="INDIVIDUAL">개인 사업자</option>
-                <option value="CORPORATE">법인 사업자</option>
+                <option value="CORPORATION">법인 사업자</option>
+                <option value="PUBLIC_INSTITUTION">공공 기관</option>
               </select>
             </div>
             <div className="flex justify-center space-x-4">

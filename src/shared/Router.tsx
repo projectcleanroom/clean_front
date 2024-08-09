@@ -79,17 +79,14 @@ const Router: React.FC = () => {
 
       {/* 파트너 레이아웃 */}
       <Route element={<PartnerLayout />}>
+        {/* Protected Routes (for authenticated users) */}
+        <Route element={<ProtectedRoute />}></Route>
         <Route path="/partnerhome" element={<PartnerHome />} />
         <Route path="/partner/:email" element={<PartnerInfo />} />
         <Route path="/partner/:email/edit" element={<PartnerEdit />} />
         <Route path="/commissioncalling" element={<CommissionCalling />} />
         <Route path="/commissionestimate" element={<CommissionEsimate />} />
-        <Route path="/commissionmatching" element={<CommissionMatching />} />        
-        {/* Public Only Routes (for non-authenticated users) */}
-        <Route element={<PublicOnlyRoute />}></Route>
-
-        {/* Protected Routes (for authenticated users) */}
-        <Route element={<ProtectedRoute />}></Route>
+        <Route path="/commissionmatching" element={<CommissionMatching />} />                
       </Route>
     </Routes>
   );
