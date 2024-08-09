@@ -23,17 +23,24 @@ import PartnerLogin from '../pages/partners/PartnerLogin';
 import PartnerSignUp from '../pages/partners/PartnerSignUp';
 import PartnerRecruitment from '../pages/exclude/PartnerRecruitment';
 import CommissionCalling from '../pages/partners/CommissionCalling';
-import CommissionEsimate from '../pages/partners/CommissionEsimate';
 import CommissionMatching from '../pages/partners/CommissionMatching';
 import MemberHome from '../pages/members/MemberHome';
 import Layout from '../components/exclude/Layout';
 import PartnerInfo from '../pages/partners/PartnerInfo';
 import PartnerEdit from '../pages/partners/PartnerEdit';
+import CommissionEstimate from '../pages/partners/CommissionEsitmate';
 
-const ProtectedRoute: React.FC = () => {
-  const { isAuthenticated, loading } = useAuth();
+const ProtectedRoute: React.FC<{ allowedRole: 'member' | 'partner' }> = ({
+  allowedRole,
+}) => {
+  const { isAuthenticated, loading, member, partner } = useAuth();
   if (loading) return <div>Loading...</div>;
-  return isAuthenticated ? <Outlet /> : <Navigate to="/loginselect" />;
+  if (!isAuthenticated) return <Navigate to="/loginselect" />;
+  if (allowedRole === 'member' && !member)
+    return <Navigate to="/loginselect" />;
+  if (allowedRole === 'partner' && !partner)
+    return <Navigate to="/loginselect" />;
+  return <Outlet />;
 };
 
 const PublicOnlyRoute: React.FC = () => {
@@ -42,7 +49,6 @@ const PublicOnlyRoute: React.FC = () => {
 };
 
 const Router: React.FC = () => {
-  
   return (
     <Routes>
       {/* exclude 레이아웃 */}
@@ -66,7 +72,7 @@ const Router: React.FC = () => {
       {/* 멤버 레이아웃 */}
       <Route element={<MemberLayout />}>
         {/* Protected Routes (for authenticated users) */}
-        <Route element={<ProtectedRoute />}>
+        <Route element={<ProtectedRoute allowedRole="member" />}>
           <Route path="/memberhome" element={<MemberHome />} />
           <Route path="/member/:email" element={<MemberInfo />} />
           <Route path="/member/:email/edit" element={<MemberEdit />} />
@@ -80,13 +86,13 @@ const Router: React.FC = () => {
       {/* 파트너 레이아웃 */}
       <Route element={<PartnerLayout />}>
         {/* Protected Routes (for authenticated users) */}
-        <Route element={<ProtectedRoute />}></Route>
+        <Route element={<ProtectedRoute allowedRole="partner" />}></Route>
         <Route path="/partnerhome" element={<PartnerHome />} />
         <Route path="/partner/:email" element={<PartnerInfo />} />
         <Route path="/partner/:email/edit" element={<PartnerEdit />} />
         <Route path="/commissioncalling" element={<CommissionCalling />} />
-        <Route path="/commissionestimate" element={<CommissionEsimate />} />
-        <Route path="/commissionmatching" element={<CommissionMatching />} />                
+        <Route path="/commissionestimate" element={<CommissionEstimate />} />
+        <Route path="/commissionmatching" element={<CommissionMatching />} />
       </Route>
     </Routes>
   );
