@@ -9,7 +9,7 @@ import {
   validateNickName,
   validatePassword,
   validatePhoneNumber,
-  validateConfirmPassword
+  validateConfirmPassword,
 } from '../../utils/validationUtils';
 
 interface SignUpForm extends Omit<Member, 'id'> {
@@ -28,7 +28,7 @@ interface FormErrors {
 
 const validations = {
   password: validatePassword,
-  confirmPassword: (value: string, formData: SignUpForm) => 
+  confirmPassword: (value: string, formData: SignUpForm) =>
     validateConfirmPassword(formData.password, value),
   nick: validateNickName,
   phoneNumber: validatePhoneNumber,
@@ -56,13 +56,22 @@ const SignUp: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    if(validations[name as keyof typeof validations]){
-      const validationResult = validations[name as keyof typeof validations](value, formData)
-      setErrors((prev)=> ({ ...prev, [name]: validationResult.message}))
+    if (validations[name as keyof typeof validations]) {
+      const validationResult = validations[name as keyof typeof validations](
+        value,
+        formData,
+      );
+      setErrors((prev) => ({ ...prev, [name]: validationResult.message }));
     }
-    if(name === 'password' && formData.confirmPassword){
-      const confirmResult = validateConfirmPassword(value, formData.confirmPassword)
-      setErrors((prev) => ({ ...prev, confirmpassword: confirmResult.message}))
+    if (name === 'password' && formData.confirmPassword) {
+      const confirmResult = validateConfirmPassword(
+        value,
+        formData.confirmPassword,
+      );
+      setErrors((prev) => ({
+        ...prev,
+        confirmpassword: confirmResult.message,
+      }));
     }
   };
 
@@ -78,7 +87,7 @@ const SignUp: React.FC = () => {
 
     try {
       // confirmPassword를 제외한 데이터만 서버로 전송
-      const { confirmPassword, ...submitData} = formData;
+      const { confirmPassword, ...submitData } = formData;
       await signupMutation.mutateAsync(submitData);
       navigate(`/login`);
     } catch (error) {
@@ -119,35 +128,48 @@ const SignUp: React.FC = () => {
                 setErrors((prev) => ({ ...prev, email: error }))
               }
             />
-            {['password', 'confirmPassword', 'nick', 'phoneNumber'].map((field) => (
-              <div key={field}>
-                <label className="block mb-1">
-                  {field === 'password'
-                    ? '비밀번호'
-                    : field === 'confirmPassword'
-                    ? '비밀번호 확인'
-                    : field === 'nick'
-                      ? '닉네임'
-                      : '전화번호'}
-                </label>
-                <input
-                  type={field === 'password' ? 'password' : field === 'confirmPassword' ? 'password' : 'text'}
-                  name={field}
-                  value={formData[field as keyof SignUpForm]}
-                  onChange={handleChange}
-                  placeholder={`${field === 'password' ? '비밀번호를 입력해주세요.' 
-                    : field === 'confirmPassword' ? '비밀번호를 입력해주세요'
-                    : field === 'nick' ? '닉네임을 입력해주세요.' 
-                    : "전화번호를 입력해주세요('-' 제외)"}`}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-                {errors[field as keyof FormErrors] && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors[field as keyof FormErrors]}
-                  </p>
-                )}
-              </div>
-            ))}
+            {['password', 'confirmPassword', 'nick', 'phoneNumber'].map(
+              (field) => (
+                <div key={field}>
+                  <label className="block mb-1">
+                    {field === 'password'
+                      ? '비밀번호'
+                      : field === 'confirmPassword'
+                        ? '비밀번호 확인'
+                        : field === 'nick'
+                          ? '닉네임'
+                          : '전화번호'}
+                  </label>
+                  <input
+                    type={
+                      field === 'password'
+                        ? 'password'
+                        : field === 'confirmPassword'
+                          ? 'password'
+                          : 'text'
+                    }
+                    name={field}
+                    value={formData[field as keyof SignUpForm]}
+                    onChange={handleChange}
+                    placeholder={`${
+                      field === 'password'
+                        ? '비밀번호를 입력해주세요.'
+                        : field === 'confirmPassword'
+                          ? '비밀번호를 입력해주세요'
+                          : field === 'nick'
+                            ? '닉네임을 입력해주세요.'
+                            : "전화번호를 입력해주세요('-' 제외)"
+                    }`}
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                  {errors[field as keyof FormErrors] && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors[field as keyof FormErrors]}
+                    </p>
+                  )}
+                </div>
+              ),
+            )}
             <div className="flex justify-center space-x-4">
               <button
                 className="btn hover:bg-blue-500 text-white py-2 px-4 rounded"

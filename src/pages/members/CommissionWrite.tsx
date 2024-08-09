@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateCommission } from '../../hooks/useCommissions';
-import { HouseType, CleanType, Commission} from '../../types/commission'
-import logo from '../../assets/logo.png'
+import { HouseType, CleanType, Commission } from '../../types/commission';
+import logo from '../../assets/logo.png';
 
 const CommissionWrite: React.FC = () => {
   const navigate = useNavigate();
   const createCommissionMutation = useCreateCommission();
 
-  const [form, setForm] = useState<Omit<Commission, 'commissionId' | 'memberNick'>>({
-    size: 0,
-    houseType: HouseType.O,
-    cleanType: CleanType.일반,
+  const [form, setForm] = useState<
+    Omit<Commission, 'commissionId' | 'memberNick'>
+  >({
+    size: null,
+    houseType: '',
+    cleanType: '',
     addressId: 0,
     image: '',
     desiredDate: '',
@@ -19,11 +21,15 @@ const CommissionWrite: React.FC = () => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev,
-      [name]: name === 'size' || name === 'addressId' ? Number(value) : value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === 'addressId' || name === 'size' ? (value === '' ? null : Number(value)) : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,7 +51,7 @@ const CommissionWrite: React.FC = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <div className="p-6 hidden sm:block">
+        <div className="p-6 hidden sm:block">
           <img
             src={logo}
             alt="깔끔한방 로고"
@@ -57,43 +63,56 @@ const CommissionWrite: React.FC = () => {
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-700">Size:</label>
+            <label className="block text-gray-700">평수:</label>
             <input
               type="number"
               name="size"
-              value={form.size}
+              value={form.size === null ? '' : form.size}
               onChange={handleChange}
+              placeholder='평수를 입력해주세요'
               required
               className="w-full p-2 border border-gray-300 rounded"
             />
           </div>
           <div>
-            <label className="block text-gray-700">House Type:</label>
-            <input
-              type="text"
+            <label className="block text-gray-700">주거 형태:</label>
+            <select
               name="houseType"
               value={form.houseType}
               onChange={handleChange}
               required
               className="w-full p-2 border border-gray-300 rounded"
-            />
+            >
+              <option value="">주거형태 선택</option>
+              {Object.entries(HouseType).map(([key, value]) => (
+                <option key={key} value={value}>
+                  {key}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
-            <label className="block text-gray-700">Clean Type:</label>
-            <input
-              type="text"
+            <label className="block text-gray-700">어떤 청소를 희망하시나요?:</label>
+            <select
               name="cleanType"
               value={form.cleanType}
               onChange={handleChange}
               required
               className="w-full p-2 border border-gray-300 rounded"
-            />
+            >
+              <option value="">청소 선택</option>
+              {Object.entries(CleanType).map(([key, value]) => (
+                <option key={key} value={value}>
+                  {key}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
-            <label className="block text-gray-700">AddressId:</label>
+            <label className="block text-gray-700">주소:</label>
             <input
               type="text"
-              name="addressId"
+              name="address"
               value={form.addressId}
               onChange={handleChange}
               required
@@ -101,7 +120,7 @@ const CommissionWrite: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700">image:</label>
+            <label className="block text-gray-700">청소할 장소의 사진을 올려주세요:</label>
             <input
               type="text"
               name="image"
@@ -112,7 +131,7 @@ const CommissionWrite: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700">Desired Date:</label>
+            <label className="block text-gray-700">희망 날짜:</label>
             <input
               type="datetime-local"
               name="desiredDate"
@@ -123,7 +142,7 @@ const CommissionWrite: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700">Significant:</label>
+            <label className="block text-gray-700">특이사항:</label>
             <textarea
               name="significant"
               value={form.significant}
