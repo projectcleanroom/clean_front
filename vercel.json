@@ -6,7 +6,7 @@
     },
     {
       "source": "/partner/(.*)",
-      "destination": "https://pt.clean-room.co.kr/$1"
+      "destination": "https://pt.clean-room.co.kr/partner$1"
     },
     {
       "source": "/((?!api|partner).*)",
