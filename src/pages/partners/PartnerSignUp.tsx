@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import EmailInput from '../../utils/EmailInput';
 import { Partner } from '../../types/partner';
-import { validatePassword, validatePhoneNumber } from '../../utils/validationUtils';
+import { validatePassword, validatePhoneNumber, validateConfirmPassword } from '../../utils/validationUtils';
 import { usePartnerSignup } from '../../hooks/usePartners';
 
 interface PartnerSignUpForm extends Omit<Partner, 'id'> {
   email: string;
   password: string;
+  confirmPassword: string;
   phoneNumber: string;
   managerName: string;
   companyName: string;
@@ -19,6 +20,7 @@ interface PartnerSignUpForm extends Omit<Partner, 'id'> {
 interface FormErrors {
   email: string;
   password: string;
+  confirmPassword: string;
   phoneNumber: string;
   managerName: string;
   companyName: string;
@@ -27,10 +29,18 @@ interface FormErrors {
   general?: string;
 }
 
+const validations = {
+  password: validatePassword,
+  confirmPassword: (value: string, formData: SignUpForm) => 
+    validateConfirmPassword(formData.password, value),
+  phoneNumber: validatePhoneNumber,
+};
+
 const PartnerSignUp: React.FC = () => {
   const [formData, setFormData] = useState<PartnerSignUpForm>({
     email: '',
     password: '',
+    confirmPassword: '',
     phoneNumber: '',
     managerName: '',
     companyName: '',
@@ -40,6 +50,7 @@ const PartnerSignUp: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({
     email: '',
     password: '',
+    confirmPassword: '',
     phoneNumber: '',
     managerName: '',
     companyName: '',

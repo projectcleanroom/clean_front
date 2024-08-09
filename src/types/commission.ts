@@ -13,9 +13,9 @@ export enum CleanType {
 export interface Commission {
   commissionId: number;
   memberNick: string;
-  size: number;
-  houseType: HouseType;
-  cleanType: CleanType;
+  size: number | null;
+  houseType: HouseType | '';
+  cleanType: CleanType | '';
   addressId: number;
   image?: string;
   desiredDate: string;

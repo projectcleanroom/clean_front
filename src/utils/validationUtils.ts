@@ -9,10 +9,32 @@ export const createValidator = (
   validateFn: (value: string) => boolean,
   errorMessage: string,
 ): ValidationFunction => {
-  return (value: string): ValidationResult => ({
-    isValid: validateFn(value),
-    message: validateFn(value) ? '' : errorMessage,
-  });
+  return (value: string): ValidationResult => {
+    if (value === '') {
+      return { isValid: true, message: '' };
+    }
+    const isValid = validateFn(value);
+    return {
+      isValid,
+      message: isValid ? '' : errorMessage,
+    };
+  };
+};
+
+export const createSelectValidator = (
+  validateFn: (value: string) => boolean,
+  errorMessage: string,
+): ValidationFunction => {
+  return (value: string): ValidationResult => {
+    if (value === '' || value === 'default') {
+      return { isValid: false, message: '옵션을 선택해주세요.' };
+    }
+    const isValid = validateFn(value);
+    return {
+      isValid,
+      message: isValid ? '' : errorMessage,
+    };
+  };
 };
 
 // 로그인 유효성 검사
@@ -33,6 +55,9 @@ export const validateConfirmPassword = (
   password: string,
   confirmPassword: string,
 ) => {
+  if(password === '' && confirmPassword !== ''){
+    return { isValid: false, message: '비밀번호를 먼저 입력해주세요'}
+  }
   if (password !== confirmPassword) {
     return { isValid: false, message: '비밀번호가 일치하지 않습니다.' };
   }
@@ -63,12 +88,12 @@ export const validateSize = createValidator(
   '크기는 양수여야 합니다.',
 );
 
-export const validateHouseType = createValidator(
+export const validateHouseType = createSelectValidator(
   (houseType) => houseType.length > 0,
   '집 유형을 입력해주세요.',
 );
 
-export const validateCleanType = createValidator(
+export const validateCleanType = createSelectValidator(
   (cleanType) => cleanType.length > 0,
   '청소 유형을 입력해주세요.',
 );
