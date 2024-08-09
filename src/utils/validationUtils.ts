@@ -55,8 +55,11 @@ export const validateConfirmPassword = (
   password: string,
   confirmPassword: string,
 ) => {
-  if(password === '' && confirmPassword !== ''){
-    return { isValid: false, message: '비밀번호를 먼저 입력해주세요'}
+  if (confirmPassword === '') {
+    return { isValid: true, message: '' };
+  }
+  if (password === '' && confirmPassword !== '') {
+    return { isValid: false, message: '비밀번호를 먼저 입력해주세요' };
   }
   if (password !== confirmPassword) {
     return { isValid: false, message: '비밀번호가 일치하지 않습니다.' };
@@ -107,3 +110,4 @@ export const validateSignificant = createValidator(
   (significant) => significant.length > 0 && significant.length <= 500,
   '특이사항은 500자 이내로 입력해주세요.',
 );
+
