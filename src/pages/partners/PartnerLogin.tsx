@@ -48,7 +48,7 @@ const PartnerLogin: React.FC = () => {
 
     try {
       const { token, refreshToken } = await loginMutation.mutateAsync(formData);
-      authLogin(token, refreshToken);
+      authLogin(token, refreshToken, true);
       navigate('/partnerhome');
     } catch (error) {
       console.error('Login error', error);

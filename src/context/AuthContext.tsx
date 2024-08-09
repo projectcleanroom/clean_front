@@ -1,14 +1,17 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import api from '../api/axiosConfig';
+import partnerApi from '../api/partnerAxiosConfig';
 import { Member } from '../types/member';
+import { Partner } from '../types/partner'
 
 export interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   member: Member | null;
-  login: (token: string, refreshToken: string) => void;
+  partner: Partner | null;
+  login: (token: string, refreshToken: string, isPartner: boolean) => void;
   logout: () => void;
-  fetchProfile: () => Promise<Boolean>;
+  fetchProfile: (isPartner?:boolean) => Promise<Boolean>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -22,13 +25,19 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [member, setMember] = useState<Member | null>(null);
+  const [partner, setPartner] = useState<Partner | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchProfile = async () => {
+  const fetchProfile = async (isPartner:boolean = false) => {
     setLoading(true);
     try {
+      if(isPartner){
+        const response = await partnerApi.get<Partner>('/partner/profile');
+        setPartner(response.data)
+      }else{
       const response = await api.get<Member>('/members/profile');
       setMember(response.data);
+    }
       setIsAuthenticated(true);
       return true;
     } catch (error) {
@@ -51,11 +60,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = (token: string, refreshToken: string) => {
+  const login = (token: string, refreshToken: string, isPartner: boolean = false) => {
     localStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
     setIsAuthenticated(true);
-    fetchProfile();
+    fetchProfile(isPartner);
   };
 
   const logout = () => {
@@ -63,11 +72,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('refreshToken');
     setIsAuthenticated(false);
     setMember(null);
+    setPartner(null);
   };
 
   const contextValue: AuthContextType = {
     isAuthenticated,
     member,
+    partner,
     login,
     logout,
     fetchProfile,

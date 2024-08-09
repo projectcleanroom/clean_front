@@ -12,7 +12,7 @@ export const fetchCurrentPartner = async (): Promise<Partner> => {
 };
 
 export const updatePartner = async (partner: Partial<Partner>): Promise<Partner> => {
-  const response = await partnerApiInstance.patch<Partner>(`/partner/${partner.email}`, partner);
+  const response = await partnerApiInstance.put<Partner>(`/partner/profile`, partner);
   return response.data;
 };
 
