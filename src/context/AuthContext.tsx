@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, ReactNode } from 'react';
 import api from '../api/axiosConfig';
 import partnerApi from '../api/partnerAxiosConfig';
 import { Member } from '../types/member';
-import { Partner } from '../types/partner'
+import { Partner } from '../types/partner';
 
 export interface AuthContextType {
   isAuthenticated: boolean;
@@ -11,7 +11,7 @@ export interface AuthContextType {
   partner: Partner | null;
   login: (token: string, refreshToken: string, isPartner: boolean) => void;
   logout: () => void;
-  fetchProfile: (isPartner?:boolean) => Promise<Boolean>;
+  fetchProfile: (isPartner?: boolean) => Promise<Boolean>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -28,16 +28,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [partner, setPartner] = useState<Partner | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchProfile = async (isPartner:boolean = false) => {
+  const fetchProfile = async (isPartner: boolean = false) => {
     setLoading(true);
     try {
-      if(isPartner){
+      if (isPartner) {
         const response = await partnerApi.get<Partner>('/partner/profile');
-        setPartner(response.data)
-      }else{
-      const response = await api.get<Member>('/members/profile');
-      setMember(response.data);
-    }
+        setPartner(response.data);
+      } else {
+        const response = await api.get<Member>('/members/profile');
+        setMember(response.data);
+      }
       setIsAuthenticated(true);
       return true;
     } catch (error) {
@@ -60,7 +60,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = (token: string, refreshToken: string, isPartner: boolean = false) => {
+  const login = (
+    token: string,
+    refreshToken: string,
+    isPartner: boolean = false,
+  ) => {
     localStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
     setIsAuthenticated(true);

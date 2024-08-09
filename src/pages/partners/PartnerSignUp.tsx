@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import EmailInput from '../../utils/EmailInput';
 import { Partner } from '../../types/partner';
-import { validatePassword, validatePhoneNumber } from '../../utils/validationUtils';
+import { validatePassword, validatePhoneNumber, validateConfirmPassword } from '../../utils/validationUtils';
 import { usePartnerSignup } from '../../hooks/usePartners';
 
 interface PartnerSignUpForm extends Omit<Partner, 'id'> {
   email: string;
   password: string;
+  confirmPassword: string;
   phoneNumber: string;
   managerName: string;
   companyName: string;
@@ -19,6 +20,7 @@ interface PartnerSignUpForm extends Omit<Partner, 'id'> {
 interface FormErrors {
   email: string;
   password: string;
+  confirmPassword: string;
   phoneNumber: string;
   managerName: string;
   companyName: string;
@@ -27,10 +29,18 @@ interface FormErrors {
   general?: string;
 }
 
+const validations = {
+  password: validatePassword,
+  confirmPassword: (value: string, formData: PartnerSignUpForm) => 
+    validateConfirmPassword(formData.password, value),
+  phoneNumber: validatePhoneNumber,
+};
+
 const PartnerSignUp: React.FC = () => {
   const [formData, setFormData] = useState<PartnerSignUpForm>({
     email: '',
     password: '',
+    confirmPassword: '',
     phoneNumber: '',
     managerName: '',
     companyName: '',
@@ -40,6 +50,7 @@ const PartnerSignUp: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({
     email: '',
     password: '',
+    confirmPassword: '',
     phoneNumber: '',
     managerName: '',
     companyName: '',
@@ -53,18 +64,14 @@ const PartnerSignUp: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    let validationResult;
-    switch (name) {
-      case 'password':
-        validationResult = validatePassword(value);
-        break;
-      case 'phoneNumber':
-        validationResult = validatePhoneNumber(value);
-        break;
-      default:
-        return;
+    if(validations[name as keyof typeof validations]){
+      const validationResult = validations[name as keyof typeof validations](value, formData)
+      setErrors((prev) => ({ ...prev, [name]: validationResult.message }));
     }
-    setErrors((prev) => ({ ...prev, [name]: validationResult.message }));
+    if (name === 'password' && formData.confirmPassword){
+      const confirmResult = validateConfirmPassword(value, formData.confirmPassword)
+      setErrors((prev) => ({ ...prev, confirmPassword: confirmResult.message}))
+    }
   };
 
   const signUpSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -78,7 +85,8 @@ const PartnerSignUp: React.FC = () => {
     }
 
     try {
-      await signupMutation.mutateAsync(formData);
+      const { confirmPassword, ...submitData } = formData
+      await signupMutation.mutateAsync(submitData);
       navigate(`/partnerlogin`);
     } catch (error) {
       console.error('signup error:', error);
@@ -91,6 +99,7 @@ const PartnerSignUp: React.FC = () => {
 
   const fieldLabels: { [key: string]: string } = {
     password: '비밀번호',
+    confirmPassword: '비밀번호 확인',
     phoneNumber: '전화번호',
     managerName: '담당자명',
     companyName: '업체명',
@@ -127,11 +136,11 @@ const PartnerSignUp: React.FC = () => {
                 setErrors((prev) => ({ ...prev, email: error }))
               }
             />
-            {['password', 'phoneNumber', 'managerName', 'companyName', 'businessType'].map((field) => (
+            {['password', 'confirmPassword', 'phoneNumber', 'managerName', 'companyName', 'businessType'].map((field) => (
               <div key={field}>
                 <label className="block mb-1">{fieldLabels[field]}</label>
                 <input
-                  type={field === 'password' ? 'password' : 'text'}
+                  type={field === 'password' ? 'password' : field === 'confirmPassword' ? 'password' : 'text'}
                   name={field}
                   value={formData[field as keyof PartnerSignUpForm]}
                   onChange={handleChange}
