@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const partnerApi = axios.create({
-  baseURL: '/partner',
 });
 
 partnerApi.interceptors.request.use(

@@ -5,7 +5,7 @@ import icon from '../../assets/icon.png'
 
 const PartnerHeader: React.FC = () => {
 
-  const { isAuthenticated, logout, member } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -44,7 +44,7 @@ const PartnerHeader: React.FC = () => {
             <>
               <button
                 className="bg-[#144156]"
-                onClick={() => navigate(`/memberinfo/${member?.email}`)}
+                onClick={() => navigate(`/partner/:email`)}
               >
                 마이 페이지
               </button>
